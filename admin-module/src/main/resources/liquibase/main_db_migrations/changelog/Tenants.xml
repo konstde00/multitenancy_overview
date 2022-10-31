@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet author="konstde00" id="create_table_tenants">
+
+        <createTable tableName="tenants">
+
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+
+            <column name="key" type="varchar(255)">
+            </column>
+
+            <column name="name" type="varchar">
+            </column>
+
+            <column name="db_name" type="varchar">
+            </column>
+
+            <column name="db_password" type="varchar">
+            </column>
+
+            <column name="db_created" type="boolean">
+            </column>
+
+        </createTable>
+
+    </changeSet>
+
+</databaseChangeLog>
