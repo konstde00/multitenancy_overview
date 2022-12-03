@@ -26,7 +26,7 @@ public class TenantController {
 
     TenantService tenantService;
 
-    @GetMapping
+    @GetMapping("/v1")
     @Operation(summary = "Get all tenants")
     public ResponseEntity<List<TenantResponseDto>> getAllTenants() {
 
@@ -38,7 +38,7 @@ public class TenantController {
         return new ResponseEntity<>(responseDtos, HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/v1")
     @Operation(summary = "Create a new tenant")
     public ResponseEntity<TenantResponseDto> createTenant(@RequestBody CreateTenantRequestDto tenantDto) {
 
@@ -47,7 +47,7 @@ public class TenantController {
         return new ResponseEntity<>(tenant, HttpStatus.CREATED);
     }
 
-    @PatchMapping
+    @PatchMapping("/v1")
     @Operation(summary = "Rename tenant")
     public ResponseEntity<?> renameTenant(@RequestBody RenameTenantRequestDto params) {
 
@@ -56,7 +56,7 @@ public class TenantController {
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/v1")
     @Operation(summary = "Delete tenant")
     public ResponseEntity<?> deleteTenant(@RequestParam @NonNull Long id) {
 
