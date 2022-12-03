@@ -1,0 +1,29 @@
+databaseChangeLog:
+  -  preConditions:
+
+  - changeSet:
+      id: userRolesAddPrimaryKeyOnUserIdAndRole
+      author: konstde00
+      changes:
+        - addPrimaryKey:
+            columnNames: user_id, role
+            constraintName: user_roles_PK
+            schemaName: public
+            tableName: user_roles
+            validate: true
+
+  - changeSet:
+      id: userRolesAddForeignKeyOnUserId
+      author: konstde00
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: user_roles
+            baseTableSchemaName: public
+            constraintName: user_roles_users_FK
+            onDelete: CASCADE
+            onUpdate: CASCADE
+            referencedColumnNames: id
+            referencedTableName: users
+            referencedTableSchemaName: public
+            validate: true

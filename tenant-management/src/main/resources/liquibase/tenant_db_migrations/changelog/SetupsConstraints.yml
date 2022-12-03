@@ -1,0 +1,13 @@
+databaseChangeLog:
+  -  preConditions:
+
+  - changeSet:
+      id: setupsAddPrimaryKeyOnId
+      author: konstde00
+      changes:
+        - addPrimaryKey:
+            columnNames: id
+            constraintName: setups_PK
+            schemaName: public
+            tableName: setups
+            validate: true

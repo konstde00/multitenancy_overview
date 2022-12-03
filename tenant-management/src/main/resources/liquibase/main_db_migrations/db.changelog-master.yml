@@ -1,0 +1,23 @@
+databaseChangeLog:
+
+  - include:
+      file: changelog/Tenants.yml
+      relativeToChangelogFile: true
+  - include:
+      file: changelog/Users.yml
+      relativeToChangelogFile: true
+  - include:
+      file: changelog/UserRoles.yml
+      relativeToChangelogFile: true
+
+#  Constraints
+
+  - include:
+      file: changelog/TenantsConstraints.yml
+      relativeToChangelogFile: true
+  - include:
+      file: changelog/UsersConstraints.yml
+      relativeToChangelogFile: true
+  - include:
+      file: changelog/UserRolesConstraints.yml
+      relativeToChangelogFile: true

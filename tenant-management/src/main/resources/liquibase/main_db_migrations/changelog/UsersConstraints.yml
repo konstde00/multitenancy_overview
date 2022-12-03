@@ -1,0 +1,29 @@
+databaseChangeLog:
+  -  preConditions:
+
+  - changeSet:
+      id: usersAddPrimaryKeyOnId
+      author: konstde00
+      changes:
+        - addPrimaryKey:
+            columnNames: id
+            constraintName: users_PK
+            schemaName: public
+            tableName: users
+            validate: true
+
+  - changeSet:
+      id: usersAddForeignKeyOnTenantId
+      author: konstde00
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: tenant_id
+            baseTableName: users
+            baseTableSchemaName: public
+            constraintName: users_tenants_FK
+            onDelete: CASCADE
+            onUpdate: CASCADE
+            referencedColumnNames: id
+            referencedTableName: tenants
+            referencedTableSchemaName: public
+            validate: true

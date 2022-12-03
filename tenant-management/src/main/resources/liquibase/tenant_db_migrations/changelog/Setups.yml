@@ -1,0 +1,31 @@
+databaseChangeLog:
+  -  preConditions:
+
+  -  changeSet:
+       id: createSetupsTable
+       author: konstde00
+       changes:
+         -  createTable:
+              columns:
+                - column:
+                    name: id
+                    type: bigint
+                - column:
+                    name: name
+                    type: varchar
+                - column:
+                    name: config
+                    type: varchar
+              schemaName: public
+              tableName: setups
+
+  - changeSet:
+      id: createSetupsIdSequence
+      author: konstde00
+      changes:
+        - createSequence:
+            dataType: bigint
+            minValue: 1
+            incrementBy: 1
+            schemaName: public
+            sequenceName: setups_id_seq

@@ -1,0 +1,40 @@
+databaseChangeLog:
+  -  preConditions:
+
+  -  changeSet:
+      id: createTenantsTable
+      author:  konstde00
+      changes:
+        -  createTable:
+             columns:
+               - column:
+                   name: id
+                   type: bigint
+               - column:
+                   name: key
+                   type: varchar
+               - column:
+                   name: name
+                   type: varchar
+               - column:
+                   name: db_name
+                   type: varchar
+               - column:
+                   name: db_password
+                   type: varchar
+               - column:
+                   name: db_created
+                   type: boolean
+             schemaName: public
+             tableName: tenants
+
+  - changeSet:
+      id: createTenantsIdSequence
+      author: konstde00
+      changes:
+        - createSequence:
+            dataType: bigint
+            minValue: 1
+            incrementBy: 1
+            schemaName: public
+            sequenceName: tenants_id_seq

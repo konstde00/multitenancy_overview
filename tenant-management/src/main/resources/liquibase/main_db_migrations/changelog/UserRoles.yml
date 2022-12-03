@@ -1,0 +1,32 @@
+databaseChangeLog:
+  -  preConditions:
+
+  -  changeSet:
+      id: createUserRolesTable
+      author: konstde00
+      changes:
+        -  createTable:
+             columns:
+               - column:
+                   name: user_id
+                   type: bigint
+               - column:
+                   name: role
+                   type: varchar
+             schemaName: public
+             tableName: user_roles
+
+  - changeSet:
+        id: addRolesForDefaultSysAdmin
+        author: konstde00
+        changes:
+          - insert:
+              columns:
+                - column:
+                    name: user_id
+                    value: 1
+                - column:
+                    name: role
+                    value: SYS_ADMIN
+              schemaName: public
+              tableName: user_roles
