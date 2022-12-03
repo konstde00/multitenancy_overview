@@ -134,7 +134,7 @@ api:
   business-apps: https://businessapps-stg.simon-kucher.com
 
 jwt:
-  secret: 4qnaaFbEuHkrhNHCZX59RuIF4fWhjYPbpkBrfsfsdfsGfE0iQ87WfSVfxer8tzfE70wXqlgdufJJ42QTQs123dhtkndS347CU
+  secret: really_strong_secret
 
 code:
   expiration:

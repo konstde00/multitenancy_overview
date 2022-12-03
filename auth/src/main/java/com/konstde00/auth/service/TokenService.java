@@ -4,7 +4,6 @@ import com.konstde00.auth.domain.dto.response.JwtDto;
 import com.konstde00.commons.domain.entity.User;
 import com.konstde00.commons.domain.enums.Role;
 import io.jsonwebtoken.Jwts;
-import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;

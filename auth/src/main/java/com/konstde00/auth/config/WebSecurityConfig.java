@@ -42,7 +42,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(STATELESS)
                 .and()
                 .csrf().disable().logout().disable();
-
-        log.info("'configure' returned success");
     }
 }

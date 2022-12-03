@@ -57,11 +57,11 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
                 var userId = Long.parseLong(claimsJws.getBody().getSubject());
 
-                var roles = ((Collection<String>) claimsJws.getBody().get("roles")).stream()
+                var roles = ((Collection<String>) claimsJws.getBody()
+                        .get("roles"))
+                        .stream()
                         .map(SimpleGrantedAuthority::new)
                         .toList();
-
-                log.info("roles: " + roles);
 
                 return new UsernamePasswordAuthenticationToken(userId, null, roles);
 

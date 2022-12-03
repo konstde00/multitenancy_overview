@@ -1,5 +1,6 @@
 package com.konstde00.commons.util;
 
+import com.konstde00.commons.exceptions.ForbiddenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -36,6 +37,6 @@ public class SecurityUtils {
             }
         }
 
-        throw new RuntimeException("Access denied");
+        throw new ForbiddenException("Access denied");
     }
 }
