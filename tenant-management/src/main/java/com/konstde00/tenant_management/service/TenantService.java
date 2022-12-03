@@ -1,6 +1,7 @@
 package com.konstde00.tenant_management.service;
 
 import com.konstde00.commons.domain.entity.Tenant;
+import com.konstde00.commons.domain.enums.Role;
 import com.konstde00.tenant_management.domain.dto.request.CreateTenantRequestDto;
 import com.konstde00.tenant_management.domain.dto.request.RenameTenantRequestDto;
 import com.konstde00.tenant_management.domain.dto.response.TenantResponseDto;
@@ -38,6 +39,12 @@ public class TenantService {
         this.tenantDao = new TenantDao(dataSource);
     }
 
+    public Tenant getById(Long id) {
+
+        return tenantRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Can't find tenant by id " + id));
+    }
+
     public List<Tenant> findAll() {
 
         return tenantRepository.findAll();
@@ -53,7 +60,7 @@ public class TenantService {
         tenant.setDbCreated(CREATED);
         tenant = saveAndFlush(tenant);
 
-        userService.createUser(requestDto.getUser(), tenant);
+        userService.create(requestDto.getUser(), tenant, List.of(Role.ADMIN));
 
         return TenantMapper.INSTANCE.toResponseDto(tenant);
     }

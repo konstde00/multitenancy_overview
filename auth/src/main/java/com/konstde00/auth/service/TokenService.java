@@ -16,6 +16,7 @@ import javax.crypto.SecretKey;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static io.jsonwebtoken.SignatureAlgorithm.HS512;
@@ -53,10 +54,11 @@ public class TokenService {
 
     private static String toToken(User user, Date expired, SecretKey secretKey) {
         return Jwts.builder()
-                .signWith(HS512, secretKey)
+                .signWith(secretKey, HS512)
                 .setSubject(Long.toString(user.getId()))
                 .setExpiration(expired)
                 .claim("userId", user.getId())
+                .claim("tenantId", Objects.requireNonNullElse(user.getTenant().getId(), null))
                 .claim("roles", user.getRoles().stream().map(Role::toString).collect(Collectors.toList()))
                 .claim("email", user.getEmail())
                 .compact();

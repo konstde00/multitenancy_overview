@@ -3,11 +3,10 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.5</version>
-		<relativePath/> <!-- lookup parent from repository -->
+	<parent>
+		<groupId>com.konstde00</groupId>
+		<artifactId>demo-data-center</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
     <groupId>com.konstde00</groupId>
