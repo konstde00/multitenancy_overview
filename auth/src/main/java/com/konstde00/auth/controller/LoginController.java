@@ -4,6 +4,7 @@ import com.konstde00.auth.domain.dto.request.LoginByUsernameDto;
 import com.konstde00.auth.domain.dto.response.JwtDto;
 import com.konstde00.auth.service.LoginService;
 import com.konstde00.auth.service.TokenService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,8 @@ public class LoginController {
     TokenService tokenService;
     //DataSourceContextHolder dataSourceContextHolder;
 
+    static String DEFAULT_DATASOURCE_KEY = null;
+
     public LoginController(LoginService loginService,
                            TokenService tokenService) {
         this.loginService = loginService;
@@ -27,9 +30,8 @@ public class LoginController {
         //this.dataSourceContextHolder = dataSourceContextHolder;
     }
 
-    static String DEFAULT_DATASOURCE_KEY = null;
-
     @PostMapping("/v1/email")
+    @Operation(summary = "Login with email")
     public JwtDto login(@RequestBody LoginByUsernameDto authenticationInfo) {
 
         String tenantKey = "";

@@ -6,6 +6,7 @@ import com.konstde00.tenant_management.domain.dto.request.RenameTenantRequestDto
 import com.konstde00.tenant_management.domain.dto.response.TenantResponseDto;
 import com.konstde00.tenant_management.mapper.TenantMapper;
 import com.konstde00.tenant_management.service.TenantService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
@@ -26,6 +27,7 @@ public class TenantController {
     TenantService tenantService;
 
     @GetMapping
+    @Operation(summary = "Get all tenants")
     public ResponseEntity<List<TenantResponseDto>> getAllTenants() {
 
         List<Tenant> tenants = tenantService.findAll();
@@ -37,6 +39,7 @@ public class TenantController {
     }
 
     @PostMapping
+    @Operation(summary = "Create a new tenant")
     public ResponseEntity<TenantResponseDto> createTenant(@RequestBody CreateTenantRequestDto tenantDto) {
 
         TenantResponseDto tenant = tenantService.create(tenantDto);
@@ -45,6 +48,7 @@ public class TenantController {
     }
 
     @PatchMapping
+    @Operation(summary = "Rename tenant")
     public ResponseEntity<?> renameTenant(@RequestBody RenameTenantRequestDto params) {
 
         tenantService.rename(params);
@@ -53,6 +57,7 @@ public class TenantController {
     }
 
     @DeleteMapping
+    @Operation(summary = "Delete tenant")
     public ResponseEntity<?> deleteTenant(@RequestParam @NonNull Long id) {
 
         tenantService.delete(id);

@@ -4,6 +4,7 @@ import com.konstde00.auth.domain.dto.request.LoginByUsernameDto;
 import com.konstde00.auth.domain.dto.response.JwtDto;
 import com.konstde00.commons.domain.entity.User;
 import com.konstde00.commons.exceptions.NotValidException;
+import com.konstde00.tenant_management.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;

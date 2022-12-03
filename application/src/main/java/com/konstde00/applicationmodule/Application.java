@@ -6,10 +6,13 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@EntityScan(basePackages = {"com.konstde00.auth", "com.konstde00.commons"})
-@EnableJpaRepositories(basePackages = {"com.konstde00.auth"})
+@EntityScan(basePackages = {"com.konstde00.auth", "com.konstde00.commons",
+        "com.konstde00.tenant_management"})
+@EnableJpaRepositories(basePackages = {"com.konstde00.auth",
+        "com.konstde00.tenant_management"})
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class},
-    scanBasePackages = {"com.konstde00.auth", "com.konstde00.commons"})
+    scanBasePackages = {"com.konstde00.auth", "com.konstde00.commons",
+            "com.konstde00.tenant_management"})
 public class Application {
 
     public static void main(String[] args) {
