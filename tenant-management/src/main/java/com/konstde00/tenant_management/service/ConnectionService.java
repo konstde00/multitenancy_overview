@@ -1,6 +1,5 @@
 package com.konstde00.tenant_management.service;
 
-import com.konstde00.commons.domain.entity.Tenant;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
@@ -8,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.net.ConnectException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -41,7 +41,7 @@ public class ConnectionService {
     static String USER = "user";
     static String PASSWORD = "password";
 
-    public Connection getConnectionToMainDatasource() {
+    public Connection getConnectionToMainDatasource() throws ConnectException {
 
         try {
             Properties dbProperties = new Properties();
@@ -50,11 +50,14 @@ public class ConnectionService {
             dbProperties.put(PASSWORD, mainDatasourcePassword);
             return DriverManager.getConnection(mainDatasourceUrl, dbProperties);
         } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException("Can't connect to DB " + mainDatasourceUrl, e);
+
+            log.error(e.getMessage());
+
+            throw new ConnectException("Can't connect to DB " + mainDatasourceUrl);
         }
     }
 
-    public Connection getConnection(String dbName, String dbPassword) {
+    public Connection getConnection(String dbName, String dbPassword) throws ConnectException {
 
         try {
 
@@ -68,7 +71,10 @@ public class ConnectionService {
                     dbProperties);
 
         } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException("Can't connect to DB", e);
+
+            log.error(e.getMessage());
+
+            throw new ConnectException("Can't connect to DB");
         }
     }
 }
