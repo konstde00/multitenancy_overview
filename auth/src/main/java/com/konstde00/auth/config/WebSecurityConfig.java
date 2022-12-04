@@ -5,7 +5,6 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -35,6 +34,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/v3/docs/**", "/swagger-ui/**", "/docs/**").permitAll()
                 .antMatchers("/api/login/**").permitAll()
                 .antMatchers("/api/tenants/**").hasAuthority("SYS_ADMIN")
+                .antMatchers(HttpMethod.GET, "/api/researches/**").hasAnyAuthority("SYS_ADMIN", "ADMIN", "USER")
+                .antMatchers(HttpMethod.POST, "/api/researches/**").hasAnyAuthority("SYS_ADMIN", "ADMIN")
+                .antMatchers(HttpMethod.PATCH, "/api/researches/**").hasAnyAuthority("SYS_ADMIN", "ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/api/researches/**").hasAnyAuthority("SYS_ADMIN", "ADMIN")
                 .anyRequest()
                 .authenticated()
                 .and()

@@ -1,11 +1,10 @@
 databaseChangeLog:
 
   - include:
-      file: changelog/Setups.yml
+      file: changelog/Researches.yml
       relativeToChangelogFile: true
 
 #  Constraints
-
   - include:
-      file: changelog/SetupsConstraints.yml
+      file: changelog/ResearchesConstraints.yml
       relativeToChangelogFile: true

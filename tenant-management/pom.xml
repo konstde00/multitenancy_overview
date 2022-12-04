@@ -5,7 +5,7 @@
 
     <parent>
         <groupId>com.konstde00</groupId>
- 	    <artifactId>demo-data-center</artifactId>
+ 	    <artifactId>demo-lab</artifactId>
  	   <version>0.0.1-SNAPSHOT</version>
     </parent>
 
@@ -50,7 +50,6 @@
             <artifactId>mapstruct-processor</artifactId>
             <version>1.2.0.Final</version>
         </dependency>
-
 
 	</dependencies>
 

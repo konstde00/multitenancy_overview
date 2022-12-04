@@ -4,7 +4,7 @@
 
 	<parent>
         <groupId>com.konstde00</groupId>
-     	<artifactId>demo-data-center</artifactId>
+     	<artifactId>demo-lab</artifactId>
      	<version>0.0.1-SNAPSHOT</version>
     </parent>
 
@@ -16,30 +16,31 @@
 	<dependencies>
 
         <dependency>
-
-            <groupId>com.konstde00</groupId>
-            <artifactId>tenant-management</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-
-        </dependency>
-
-        <dependency>
-
-            <groupId>com.konstde00</groupId>
-            <artifactId>commons</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-
-        </dependency>
-
-        <dependency>
-
             <groupId>com.konstde00</groupId>
             <artifactId>auth</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
 
+        <dependency>
+            <groupId>com.konstde00</groupId>
+            <artifactId>tenant-management</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.konstde00</groupId>
+            <artifactId>lab</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.konstde00</groupId>
+            <artifactId>commons</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
 
 	</dependencies>

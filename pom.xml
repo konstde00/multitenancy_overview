@@ -11,10 +11,10 @@
 	</parent>
 
 	<groupId>com.konstde00</groupId>
-	<artifactId>demo-data-center</artifactId>
+	<artifactId>demo-lab</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>demo-data-center</name>
-	<description>demo-data-center</description>
+	<name>demo-lab</name>
+	<description>demo-lab</description>
 
 	<properties>
 		<java.version>17</java.version>

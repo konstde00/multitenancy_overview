@@ -2,12 +2,12 @@ databaseChangeLog:
   -  preConditions:
 
   - changeSet:
-      id: setupsAddPrimaryKeyOnId
+      id: researchesAddPrimaryKeyOnId
       author: konstde00
       changes:
         - addPrimaryKey:
             columnNames: id
-            constraintName: setups_PK
+            constraintName: researches_PK
             schemaName: public
-            tableName: setups
+            tableName: researches
             validate: true

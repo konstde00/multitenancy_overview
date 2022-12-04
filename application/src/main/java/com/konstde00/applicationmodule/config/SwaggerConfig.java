@@ -1,4 +1,4 @@
-package com.konstde00.tenant_management.config;
+package com.konstde00.applicationmodule.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
@@ -14,8 +14,8 @@ import org.springframework.context.annotation.Configuration;
         scheme = "basic"
 )
 @OpenAPIDefinition(
-        info = @io.swagger.v3.oas.annotations.info.Info(title = "Demo data center api documentation",
-                description = "Demo data center api documentation", version = "v3"),
+        info = @io.swagger.v3.oas.annotations.info.Info(title = "Demo lab api documentation",
+                description = "Demo lab api documentation", version = "v3"),
         security = @io.swagger.v3.oas.annotations.security.SecurityRequirement(name = "basicAuth")
 )
 public class SwaggerConfig {
@@ -24,8 +24,8 @@ public class SwaggerConfig {
     public OpenAPI springOpenAPI() {
 
         return new OpenAPI()
-                .info(new Info().title("Demo data center API")
-                        .description("Demo data center api documentation")
+                .info(new Info().title("Demo lab API")
+                        .description("Demo lab api documentation")
                         .version("v3"));
     }
 }
