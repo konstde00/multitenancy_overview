@@ -8,6 +8,7 @@ import com.konstde00.tenant_management.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +17,7 @@ import static lombok.AccessLevel.PRIVATE;
 @Slf4j
 @Service
 @AllArgsConstructor
-//@DependsOn("dataSourceRouting")
+@DependsOn("dataSourceRouting")
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 public class LoginService {
 

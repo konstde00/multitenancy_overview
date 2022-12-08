@@ -8,14 +8,12 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
-
 import javax.crypto.SecretKey;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static io.jsonwebtoken.SignatureAlgorithm.HS512;
@@ -24,13 +22,13 @@ import static lombok.AccessLevel.PRIVATE;
 
 @Slf4j
 @Service
-//@DependsOn("dataSourceRouting")
+@DependsOn("dataSourceRouting")
 @FieldDefaults(level = PRIVATE, makeFinal = true)
-@PropertySource(value = "classpath:application.yml")
+//@PropertySource(value = "file:auth/src/main/resources/auth-config.yml")
 public class TokenService {
 
     @NonFinal
-    @Value("${jwt.secret}")
+    @Value("${jwt.secret:very_strong_secret_very_strong_secret_very_strong_secret_very_strong_secret_very_strong_secret_very_strong_secret}")
     String jwtSecret;
 
     @NonFinal
@@ -57,7 +55,7 @@ public class TokenService {
                 .setSubject(Long.toString(user.getId()))
                 .setExpiration(expired)
                 .claim("userId", user.getId())
-                .claim("tenantId", Objects.requireNonNullElse(user.getTenant().getId(), null))
+                .claim("tenantId", user.getTenant() == null ? null : user.getTenant().getId())
                 .claim("roles", user.getRoles().stream().map(Role::toString).collect(Collectors.toList()))
                 .claim("email", user.getEmail())
                 .compact();

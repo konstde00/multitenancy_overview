@@ -5,6 +5,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import java.net.ConnectException;
@@ -15,27 +16,28 @@ import java.util.Properties;
 
 @Slf4j
 @Component
+//@PropertySource(ignoreResourceNotFound = true, value = "classpath:config.yml")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ConnectionService {
 
     @NonFinal
-    @Value("${datasource.main.url}")
+    @Value("${datasource.main.url:jdbc:postgresql://localhost:5432/demo_data_center}")
     String mainDatasourceUrl;
 
     @NonFinal
-    @Value("${datasource.main.username}")
+    @Value("${datasource.main.username:demo_data_center}")
     String mainDatasourceUsername;
 
     @NonFinal
-    @Value("${datasource.main.password}")
+    @Value("${datasource.main.password:mega_secure_password}")
     String mainDatasourcePassword;
 
     @NonFinal
-    @Value("${datasource.base-url}")
+    @Value("${datasource.base-url:jdbc:postgresql://localhost:5432/}")
     String datasourceBaseUrl;
 
     @NonFinal
-    @Value("${datasource.main.driver}")
+    @Value("${datasource.main.driver:org.postgresql.Driver}")
     String mainDatasourceDriverClassName;
 
     static String USER = "user";
@@ -57,13 +59,13 @@ public class ConnectionService {
         }
     }
 
-    public Connection getConnection(String dbName, String dbPassword) throws ConnectException {
+    public Connection getConnection(String dbName, String userName, String dbPassword) throws ConnectException {
 
         try {
 
             Properties dbProperties = new Properties();
             Class.forName(mainDatasourceDriverClassName);
-            dbProperties.put(USER, dbName);
+            dbProperties.put(USER, userName);
             dbProperties.put(PASSWORD, dbPassword);
 
             return DriverManager

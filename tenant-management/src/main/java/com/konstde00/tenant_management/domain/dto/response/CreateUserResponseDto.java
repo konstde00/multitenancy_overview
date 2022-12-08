@@ -11,6 +11,4 @@ public class CreateUserResponseDto {
     Long id;
 
     String email;
-
-    String password;
 }

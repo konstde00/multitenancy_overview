@@ -9,18 +9,21 @@ import com.konstde00.tenant_management.domain.dto.response.TenantResponseDto;
 import com.konstde00.tenant_management.mapper.TenantMapper;
 import com.konstde00.tenant_management.repository.TenantRepository;
 import com.konstde00.tenant_management.repository.dao.TenantDao;
+import com.konstde00.tenant_management.service.data_source.DataSourceRoutingService;
+import com.konstde00.tenant_management.service.data_source.DatasourceConfigService;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.sql.DataSource;
 import java.util.List;
 
 @Slf4j
 @Service
+@DependsOn("dataSourceRouting")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class TenantService {
 
@@ -29,15 +32,21 @@ public class TenantService {
     UserService userService;
     LiquibaseService liquibaseService;
     TenantRepository tenantRepository;
+    DatasourceConfigService datasourceConfigService;
+    DataSourceRoutingService dataSourceRoutingService;
 
     public TenantService(UserService userService,
                          TenantRepository tenantRepository,
                          LiquibaseService liquibaseService,
-                         @Qualifier("mainDataSource") DataSource dataSource) {
+                         @Qualifier("mainDataSourceProperties") DataSourceProperties mainDatasourceProperties,
+                         DatasourceConfigService datasourceConfigService,
+                         DataSourceRoutingService dataSourceRoutingService) {
         this.userService = userService;
         this.tenantRepository = tenantRepository;
         this.liquibaseService = liquibaseService;
-        this.tenantDao = new TenantDao(dataSource);
+        this.tenantDao = new TenantDao(mainDatasourceProperties);
+        this.datasourceConfigService = datasourceConfigService;
+        this.dataSourceRoutingService = dataSourceRoutingService;
     }
 
     public Tenant getById(Long id) {
@@ -53,8 +62,10 @@ public class TenantService {
 
     public TenantResponseDto create(CreateTenantRequestDto requestDto) {
 
+        requestDto.setUserName(requestDto.getUserName().toLowerCase());
+
         tenantDao.createTenantDb(requestDto.getName(), requestDto.getUserName(), requestDto.getDbPassword());
-        liquibaseService.enableMigrations(requestDto.getDbName(), requestDto.getDbPassword());
+        liquibaseService.enableMigrations(requestDto.getDbName(), requestDto.getUserName(), requestDto.getDbPassword());
 
         Tenant tenant = TenantMapper.INSTANCE.fromRequestDto(requestDto);
 
@@ -62,6 +73,9 @@ public class TenantService {
         tenant = saveAndFlush(tenant);
 
         userService.create(requestDto.getUser(), tenant, List.of(Role.ADMIN));
+
+        dataSourceRoutingService.updateResolvedDataSources(datasourceConfigService
+                .configureDataSources(tenantDao.getTenantInfo()));
 
         return TenantMapper.INSTANCE.toResponseDto(tenant);
     }

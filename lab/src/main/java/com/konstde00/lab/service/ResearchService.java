@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import java.util.List;
 @Slf4j
 @Service
 @AllArgsConstructor
+@DependsOn("dataSourceRouting")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ResearchService {
 

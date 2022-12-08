@@ -19,6 +19,7 @@ spring:
   main:
     allow-bean-definition-overriding: true
   datasource:
+    driverClassName: org.postgresql.Driver
     url: jdbc:postgresql://127.0.0.1:5432/demo_data_center
     username: demo_data_center
     password: mega_secure_password
@@ -86,9 +87,6 @@ logging:
   level:
     org.hibernate.SQL: INFO
     org.springframework.jdbc.core: INFO
-#    org.springframework.orm.jpa: DEBUG
-#    org.springframework.transaction: DEBUG
-    com.impltech.surveyPricing: DEBUG
 
 twilio:
   sms:
@@ -134,7 +132,7 @@ api:
   business-apps: https://businessapps-stg.simon-kucher.com
 
 jwt:
-  secret: really_strong_secret
+  secret: very_strong_secret_very_strong_secret_very_strong_secret_very_strong_secret_very_strong_secret_very_strong_secret
 
 code:
   expiration:
@@ -145,9 +143,18 @@ threads:
     excel: 1000
 
 token:
-  expiration:
-    time:
-      sec: 1440
+  accountManager:
+    expiration:
+      time:
+        ms: 7776000000
+  admin:
+    expiration:
+      time:
+        ms: 86400000
+    remember:
+      expiration:
+        time:
+          ms: 2592000000
 
 driver: org.postgresql.Driver
 url: ${spring.datasource.url}
@@ -158,3 +165,4 @@ password: ${spring.datasource.password}
 
 environment: ${ENVIRONMENT:PROD}
 
+test.cron: '* */5 * * * *'

@@ -1,0 +1,66 @@
+
+### 1. Login as sys admin
+POST localhost:8080/api/login/v1/email
+Content-Type: application/json
+
+{
+    "email":"defaultSysAdmin@gmail.com",
+    "password":"JustAPasswordForDefaultSysAdmin"
+}
+
+### 2. Create database for tenant
+POST localhost:8080/api/tenants/v1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNjcwNTI2Njk3LCJ1c2VySWQiOjEsInJvbGVzIjpbIlNZU19BRE1JTiJdLCJlbWFpbCI6ImRlZmF1bHRTeXNBZG1pbkBnbWFpbC5jb20ifQ.cR1xskzxKiFVYdwOBRVOZsyjNSq_5ODzkfHq1PFPoutAg__xJ-LTlvjhesN2Qz6epMzw1-TT6hwy5zJMrrTfSQ
+
+{
+  "name": "test_tenant",
+  "dbName": "test_tenant",
+  "userName": "test_tenant_userName",
+  "dbPassword": "test_tenant_password",
+  "user": {
+    "email": "test123@gmail.com",
+    "password": "test_tenant_password"
+  }
+}
+
+### 3. Create a user with "ADMIN" role for this tenant
+
+POST localhost:8080/api/users/v1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNjcwNTI2Njk3LCJ1c2VySWQiOjEsInJvbGVzIjpbIlNZU19BRE1JTiJdLCJlbWFpbCI6ImRlZmF1bHRTeXNBZG1pbkBnbWFpbC5jb20ifQ.cR1xskzxKiFVYdwOBRVOZsyjNSq_5ODzkfHq1PFPoutAg__xJ-LTlvjhesN2Qz6epMzw1-TT6hwy5zJMrrTfSQ
+
+{
+  "tenantId": 2,
+  "email": "admin@gmail.com",
+  "password": "admin_password",
+  "roles" : ["ADMIN"]
+}
+
+### 4. Login as ADMIN of this tenant
+
+POST localhost:8080/api/login/v1/email
+Content-Type: application/json
+
+{
+  "email":"admin@gmail.com",
+  "password":"admin_password"
+}
+
+### 5. Create a research in this tenant
+
+POST localhost:8080/api/researches/v1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzIiwiZXhwIjoxNjcwNTI2NzU0LCJ1c2VySWQiOjMsInRlbmFudElkIjoyLCJyb2xlcyI6WyJBRE1JTiJdLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSJ9.yp0apmYkzp1IxKOVYH_iUyPyvbr0lHCDdYRwaufasWnqucGGPahKHPLR7Lrn1pcg4hU86fgWupYpGf-KdlFECw
+
+{
+  "name": "Just a test research name",
+  "description": "Just a test research description"
+}
+
+
+### 6. Get list of all available researches
+
+GET localhost:8080/api/researches/v1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzIiwiZXhwIjoxNjcwNTI2NzU0LCJ1c2VySWQiOjMsInRlbmFudElkIjoyLCJyb2xlcyI6WyJBRE1JTiJdLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSJ9.yp0apmYkzp1IxKOVYH_iUyPyvbr0lHCDdYRwaufasWnqucGGPahKHPLR7Lrn1pcg4hU86fgWupYpGf-KdlFECw

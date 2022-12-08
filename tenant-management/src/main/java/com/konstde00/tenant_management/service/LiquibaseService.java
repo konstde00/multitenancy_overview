@@ -28,7 +28,7 @@ import static lombok.AccessLevel.PRIVATE;
 
 @Slf4j
 @Service
-//@DependsOn("dataSourceRouting")
+@DependsOn("dataSourceRouting")
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 public class LiquibaseService implements SmartInitializingSingleton {
 
@@ -53,13 +53,13 @@ public class LiquibaseService implements SmartInitializingSingleton {
 
         for (Tenant tenant : tenants) {
 
-            enableMigrations(tenant.getDbName(), tenant.getDbPassword());
+            enableMigrations(tenant.getDbName(), tenant.getUserName(), tenant.getDbPassword());
         }
     }
 
-    public synchronized void enableMigrations(String dbName, String dbPassword) {
+    public synchronized void enableMigrations(String dbName, String userName, String dbPassword) {
 
-        try (Connection connection = connectionService.getConnection(dbName, dbPassword)) {
+        try (Connection connection = connectionService.getConnection(dbName, userName, dbPassword)) {
 
             Database database = DatabaseFactory.getInstance()
                 .findCorrectDatabaseImplementation(new JdbcConnection(connection));

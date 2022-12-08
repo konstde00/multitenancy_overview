@@ -24,18 +24,18 @@ import static lombok.AccessLevel.PRIVATE;
 public class TenantDaoHolderImpl implements DaoHolder {
 
     @NonFinal
-    Map<String, TenantDao> templates;
+    Map<Long, TenantDao> templates;
 
     @NonFinal
-    @Value("${datasource.base-url}")
+    @Value("${datasource.base-url:jdbc:postgresql://localhost:5432/}")
     String datasourceBaseUrl;
 
     @NonFinal
-    @Value("${datasource.main.driver}")
+    @Value("${datasource.main.driver:org.postgresql.Driver}")
     String mainDatasourceDriverClassName;
 
     @NonFinal
-    @Value("${datasource.main.name}")
+    @Value("${datasource.main.name:demo_data_center}")
     String mainDbName;
 
     @Override
@@ -44,16 +44,16 @@ public class TenantDaoHolderImpl implements DaoHolder {
         templates = new HashMap<>();
     }
 
-    public TenantDao getTemplateByTenantKey(String tenantKey) {
+    public TenantDao getTemplateByTenantKey(Long tenantKey) {
 
         return templates.get(tenantKey);
     }
 
-    public void addNewTemplates(Map<Object, Object> dataSources) {
+    public void addNewTemplates(Map<Object, DataSource> dataSources) {
 
-        dataSources.forEach((key, value) -> templates.putIfAbsent((String) key,
+        dataSources.forEach((key, value) -> templates.putIfAbsent((Long) key,
             TenantDao.builder()
-                .jdbcTemplate(new JdbcTemplate((DataSource) value))
+                .jdbcTemplate(new JdbcTemplate(value))
                 .datasourceBaseUrl(datasourceBaseUrl)
                 .mainDatasourceDriverClassName(mainDatasourceDriverClassName)
                 .mainDbName(mainDbName)

@@ -1,5 +1,6 @@
 package com.konstde00.tenant_management.repository.dao;
 
+import com.konstde00.tenant_management.domain.dto.data_source.TenantDbInfoDto;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,12 +8,15 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 @Slf4j
 @Builder
@@ -22,25 +26,47 @@ import javax.sql.DataSource;
 public class TenantDao {
 
     @NonFinal
-    @Value("${datasource.base-url}")
+    @Value("${datasource.base-url:jdbc:postgresql://localhost:5432/}")
     String datasourceBaseUrl;
 
     @NonFinal
-    @Value("${datasource.main.driver}")
+    @Value("${datasource.main.driver:org.postgresql.Driver}")
     String mainDatasourceDriverClassName;
 
     @NonFinal
-    @Value("${datasource.main.name}")
+    @Value("${datasource.main.name:demo_data_center}")
     String mainDbName;
 
     JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public TenantDao(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    public TenantDao(
+            @Qualifier("mainDataSourceProperties") DataSourceProperties mainDatasourceProperties) {
+        this.jdbcTemplate = new JdbcTemplate(mainDatasourceProperties.initializeDataSourceBuilder().build());
     }
 
+    public List<TenantDbInfoDto> getTenantInfo() {
+
+        String query = "select id, db_name, user_name, db_password " +
+                "from tenants " +
+                "where db_created = true";
+        return jdbcTemplate.query(query, (rs, rowNum) -> {
+
+            TenantDbInfoDto dto = new TenantDbInfoDto();
+
+            dto.setKey(rs.getLong("id"));
+            dto.setDbName(rs.getString("db_name"));
+            dto.setUserName(rs.getString("user_name"));
+            dto.setDbPassword(rs.getString("db_password"));
+
+            return dto;
+        });
+    }
+
+    //TODO: think about toLowerCase() removing
     public void createTenantDb(String dbName, String userName, String password) {
+
+        userName = userName.toLowerCase();
 
         createUserIfMissing(userName, password);
 

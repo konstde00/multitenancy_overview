@@ -25,12 +25,13 @@ public class Tenant {
         sequenceName = "tenants_id_seq", allocationSize = 1)
     Long id;
 
-    String key;
-
     String name;
 
     @Column(name = "db_name")
     String dbName;
+
+    @Column(name = "user_name")
+    String userName;
 
     @Column(name = "db_password")
     String dbPassword;

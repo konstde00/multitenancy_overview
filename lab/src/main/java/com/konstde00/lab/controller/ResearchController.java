@@ -4,6 +4,7 @@ import com.konstde00.lab.domain.dto.request.CreateResearchRequestDto;
 import com.konstde00.lab.domain.dto.request.UpdateResearchRequestDto;
 import com.konstde00.lab.domain.dto.response.ResearchResponseDto;
 import com.konstde00.lab.service.ResearchService;
+import com.konstde00.tenant_management.service.data_source.DataSourceContextHolder;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -24,12 +25,19 @@ import static lombok.AccessLevel.PRIVATE;
 public class ResearchController {
 
     ResearchService researchService;
+    DataSourceContextHolder dataSourceContextHolder;
+
+    static Long DEFAULT_DATASOURCE_KEY = null;
 
     @GetMapping("/v1")
     @Operation(summary = "Get all researches")
     public ResponseEntity<List<ResearchResponseDto>> getAll(HttpServletRequest request) {
 
+        dataSourceContextHolder.updateContextForCompanyFromToken(request);
+
         List<ResearchResponseDto> researches = researchService.findAll();
+
+        dataSourceContextHolder.setBranchContext(DEFAULT_DATASOURCE_KEY);
 
         return new ResponseEntity<>(researches, HttpStatus.OK);
     }
@@ -39,7 +47,11 @@ public class ResearchController {
     public ResponseEntity<ResearchResponseDto> create(@RequestBody CreateResearchRequestDto researchDto,
                                                       HttpServletRequest request) {
 
+        dataSourceContextHolder.updateContextForCompanyFromToken(request);
+
         ResearchResponseDto research = researchService.create(researchDto);
+
+        dataSourceContextHolder.setBranchContext(DEFAULT_DATASOURCE_KEY);
 
         return new ResponseEntity<>(research, HttpStatus.CREATED);
     }
@@ -49,7 +61,11 @@ public class ResearchController {
     public ResponseEntity<ResearchResponseDto> update(@RequestBody UpdateResearchRequestDto params,
                                                       HttpServletRequest request) {
 
+        dataSourceContextHolder.updateContextForCompanyFromToken(request);
+
         ResearchResponseDto research = researchService.update(params);
+
+        dataSourceContextHolder.setBranchContext(DEFAULT_DATASOURCE_KEY);
 
         return new ResponseEntity<>(research, HttpStatus.ACCEPTED);
     }
@@ -59,7 +75,11 @@ public class ResearchController {
     public ResponseEntity<?> deleteById(@RequestParam @NonNull Long id,
                                         HttpServletRequest request) {
 
+        dataSourceContextHolder.updateContextForCompanyFromToken(request);
+
         researchService.delete(id);
+
+        dataSourceContextHolder.setBranchContext(DEFAULT_DATASOURCE_KEY);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
