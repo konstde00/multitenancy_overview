@@ -2,6 +2,7 @@ package com.konstde00.auth.config;
 
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,6 +19,7 @@ import java.util.Collection;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Slf4j
+@Order(1)
 public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
     private final String jwtSecret;

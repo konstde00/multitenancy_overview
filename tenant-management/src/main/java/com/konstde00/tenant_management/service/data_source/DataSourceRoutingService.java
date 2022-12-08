@@ -3,7 +3,6 @@ package com.konstde00.tenant_management.service.data_source;
 import com.konstde00.tenant_management.domain.dto.data_source.TenantDbInfoDto;
 import com.konstde00.tenant_management.repository.dao.TenantDao;
 import com.konstde00.tenant_management.service.dao_holder.DaoHolder;
-import com.zaxxer.hikari.HikariDataSource;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
@@ -14,10 +13,8 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 import javax.sql.DataSource;
-import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +68,7 @@ public class DataSourceRoutingService extends AbstractRoutingDataSource implemen
     @Override
     protected Object determineCurrentLookupKey() {
 
-        return DataSourceContextHolder.getBranchContext();
+        return DataSourceContextHolder.getCurrentTenantId();
     }
 
     public void updateResolvedDataSources(Map<Object, DataSource> dataSources) {

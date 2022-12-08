@@ -23,29 +23,29 @@ public class DataSourceContextHolder {
     UserService userService;
 
     @NonFinal
-    static ThreadLocal<Long> threadLocal = new ThreadLocal<>();
+    static ThreadLocal<Long> currentTenantId = new ThreadLocal<>();
 
     public DataSourceContextHolder(@Lazy UserService userService) {
 
         this.userService = userService;
     }
 
-    public static void setBranchContext(Long tenantId) {
+    public static void setCurrentTenantId(Long tenantId) {
 
-        threadLocal.set(tenantId);
+        currentTenantId.set(tenantId);
     }
 
-    public static Long getBranchContext() {
+    public static Long getCurrentTenantId() {
 
-        return threadLocal.get();
+        return currentTenantId.get();
     }
 
-    public void updateContextForCompanyFromToken(HttpServletRequest request) {
+    public void updateTenantContext(HttpServletRequest request) {
 
         UserAuthShortDto user = userService.getActualUser(request);
 
         Long tenantId = user.getTenantId();
 
-        setBranchContext(tenantId);
+        setCurrentTenantId(tenantId);
     }
 }
