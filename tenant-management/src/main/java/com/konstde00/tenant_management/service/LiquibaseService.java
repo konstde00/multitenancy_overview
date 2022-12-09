@@ -54,8 +54,8 @@ public class LiquibaseService implements SmartInitializingSingleton {
 
     public synchronized void enableMigrations(String dbName, String userName, String dbPassword) {
 
-        try (val connection = connectionService.getConnection(dbName, userName, dbPassword);
-             val liquibase = new Liquibase(TENANT_MIGRATIONS_CLASSPATH + CHANGELOG_FILE,
+        try (Connection connection = connectionService.getConnection(dbName, userName, dbPassword);
+             Liquibase liquibase = new Liquibase(TENANT_MIGRATIONS_CLASSPATH + CHANGELOG_FILE,
                      new ClassLoaderResourceAccessor(), getDatabase(connection))) {
 
             liquibase.update(new Contexts(), new LabelExpression());
@@ -68,8 +68,8 @@ public class LiquibaseService implements SmartInitializingSingleton {
 
     public void enableMigrationsToMainDatasource() {
 
-        try (val connection = connectionService.getConnectionToMainDatasource();
-             val liquibase = new Liquibase(MAIN_DS_MIGRATIONS_CLASSPATH + CHANGELOG_FILE,
+        try (Connection connection = connectionService.getConnectionToMainDatasource();
+             Liquibase liquibase = new Liquibase(MAIN_DS_MIGRATIONS_CLASSPATH + CHANGELOG_FILE,
                      new ClassLoaderResourceAccessor(), getDatabase(connection))) {
 
             liquibase.update(new Contexts(), new LabelExpression());

@@ -1,5 +1,7 @@
 package com.konstde00.auth.config;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -19,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -57,16 +60,16 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         if (token != null && token.startsWith(BEARER)) {
 
             try {
-                val claims = token.replace(BEARER, StringUtils.EMPTY);
+                String claims = token.replace(BEARER, StringUtils.EMPTY);
 
-                val claimsJws = Jwts.parserBuilder()
+                Jws<Claims> claimsJws = Jwts.parserBuilder()
                         .setSigningKey(jwtSecret.getBytes())
                         .build()
                         .parseClaimsJws(claims);
 
-                val userId = Long.parseLong(claimsJws.getBody().getSubject());
+                Long userId = Long.parseLong(claimsJws.getBody().getSubject());
 
-                val roles = ((Collection<String>) claimsJws.getBody()
+                List<SimpleGrantedAuthority> roles = ((Collection<String>) claimsJws.getBody()
                         .get("roles"))
                         .stream()
                         .map(SimpleGrantedAuthority::new)
