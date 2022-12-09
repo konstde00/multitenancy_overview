@@ -18,10 +18,10 @@ public class MainDataSourceConfig {
     @Value("${datasource.main.driver:org.postgresql.Driver}")
     String driver;
 
-    @Value("${datasource.main.url:jdbc:postgresql://localhost:5432/demo_data_center}")
+    @Value("${datasource.main.url:jdbc:postgresql://localhost:5432/demo_lab}")
     String url;
 
-    @Value("${datasource.main.username:demo_data_center}")
+    @Value("${datasource.main.username:demo_lab}")
     String username;
 
     @Value("${datasource.main.password:mega_secure_password}")

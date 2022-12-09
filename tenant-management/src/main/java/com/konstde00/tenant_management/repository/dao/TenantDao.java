@@ -34,7 +34,7 @@ public class TenantDao {
     String mainDatasourceDriverClassName;
 
     @NonFinal
-    @Value("${datasource.main.name:demo_data_center}")
+    @Value("${datasource.main.name:demo_lab}")
     String mainDbName;
 
     JdbcTemplate jdbcTemplate;

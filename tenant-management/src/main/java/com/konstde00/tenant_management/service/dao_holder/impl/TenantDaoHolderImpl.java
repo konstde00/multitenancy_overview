@@ -35,7 +35,7 @@ public class TenantDaoHolderImpl implements DaoHolder {
     String mainDatasourceDriverClassName;
 
     @NonFinal
-    @Value("${datasource.main.name:demo_data_center}")
+    @Value("${datasource.main.name:demo_lab}")
     String mainDbName;
 
     @Override

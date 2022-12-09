@@ -19,11 +19,11 @@ import java.util.Properties;
 public class ConnectionService {
 
     @NonFinal
-    @Value("${datasource.main.url:jdbc:postgresql://localhost:5432/demo_data_center}")
+    @Value("${datasource.main.url:jdbc:postgresql://localhost:5432/demo_lab}")
     String mainDatasourceUrl;
 
     @NonFinal
-    @Value("${datasource.main.username:demo_data_center}")
+    @Value("${datasource.main.username:demo_lab}")
     String mainDatasourceUsername;
 
     @NonFinal

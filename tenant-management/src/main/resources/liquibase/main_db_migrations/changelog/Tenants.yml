@@ -50,13 +50,13 @@ databaseChangeLog:
                   value: 1
               - column:
                   name: name
-                  value: demo_data_center
+                  value: demo_lab
               - column:
                   name: db_name
-                  value: demo_data_center
+                  value: demo_lab
               - column:
                   name: user_name
-                  value: demo_data_center
+                  value: demo_lab
               - column:
                   name: db_password
                   value: mega_secure_password

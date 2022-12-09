@@ -20,8 +20,8 @@ spring:
     allow-bean-definition-overriding: true
   datasource:
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://127.0.0.1:5432/demo_data_center
-    username: demo_data_center
+    url: jdbc:postgresql://127.0.0.1:5432/demo_lab
+    username: demo_lab
     password: mega_secure_password
     hikari:
       minimum-idle: 90
@@ -56,20 +56,6 @@ spring:
     scheduling:
       pool:
         size: 1
-
-  mail:
-    host: ${SMTP_SERVER:email-smtp.eu-central-1.amazonaws.com}
-    port: ${SMTP_PORT:587}
-    username: ${SMTP_AUTH_USER:AKIAVQL5AQAFMLUOA3HL}
-    password: ${SMTP_AUTH_PASS:BPlJym3jpeJqxUc6vy9958lxL+ZVCE9RYXDaHRv5NX2e}
-    sender: ${SENDER_ADDRESS:noreply@businessapps-stg.simon-kucher.com}
-    protocol: smtp
-    properties.mail.smtp:
-      starttls.enable: true
-      starttls.required: true
-      ssl.enable: true
-      properties.mail.smtps:
-        auth: true
   messages:
     cache-duration: PT1S # 1 second, see the ISO 8601 standard
   thymeleaf:
@@ -88,48 +74,14 @@ logging:
     org.hibernate.SQL: INFO
     org.springframework.jdbc.core: INFO
 
-twilio:
-  sms:
-    sid: sid
-    token: token
-    phone: +4915735982170
-
-bmsapi:
-  host:
-    url: https://host
-  username: Impltech
-  password: pass
-
 datasource:
   base-url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5432/}
   main:
-    name: ${MAIN_DB_NAME:demo_data_center}
+    name: ${MAIN_DB_NAME:demo_lab}
     driver: ${MAIN_DATASOURCE_DRIVER:org.postgresql.Driver}
-    url: ${MAIN_DATASOURCE_URL:jdbc:postgresql://localhost:5432/demo_data_center}
-    username: ${MAIN_DATASOURCE_USERNAME:demo_data_center}
+    url: ${MAIN_DATASOURCE_URL:jdbc:postgresql://localhost:5432/demo_lab}
+    username: ${MAIN_DATASOURCE_USERNAME:demo_lab}
     password: ${MAIN_DATASOURCE_PASSWORD:mega_secure_password}
-  test:
-    impltech:
-      driver: org.postgresql.Driver
-      url: jdbc:postgresql://localhost:5432/pic_tenant
-      username: pic_tenant
-      password: pass_for_test_db
-
-project:
-  secret: ${CLIENT_SECRET:mNp59VI3s9bSgLGT0M5j2Dy9iHPZHclb}
-  client-id: ${CLIENT_ID:pic}
-  sync-token: ${SYNC_TOKEN:N6308zAE0XudTT4bGGZCcciWA8z0Wjsu}
-  redirect-uri: ${REDIRECT_URI:https://dev-survey-pricing.impltech.com/oauth2/callback}
-
-scheduled:
-  amount:
-    first_survey_answers_customers: 2000
-    first_survey_answers_bu: 5000
-    second_survey_answers: 2000
-    negotiations: 75
-
-api:
-  business-apps: https://businessapps-stg.simon-kucher.com
 
 jwt:
   secret: 4qnaaFbEuHkrhNHCZX59RuIF4fWhjYPbpkBrfsfsdfsGfE0iQ87WfSVfxer8tzfE70wXqlgdufJJ42QTQs123dhtkndS347CU
@@ -162,7 +114,3 @@ verbose: true
 dropFirst: false
 username: ${spring.datasource.username}
 password: ${spring.datasource.password}
-
-environment: ${ENVIRONMENT:PROD}
-
-test.cron: '* */5 * * * *'
