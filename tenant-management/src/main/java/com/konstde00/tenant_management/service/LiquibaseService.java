@@ -8,19 +8,14 @@ import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.DatabaseException;
-import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.SmartInitializingSingleton;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
-
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.util.List;
 
@@ -59,19 +54,13 @@ public class LiquibaseService implements SmartInitializingSingleton {
 
     public synchronized void enableMigrations(String dbName, String userName, String dbPassword) {
 
-        try (Connection connection = connectionService.getConnection(dbName, userName, dbPassword)) {
-
-            Database database = DatabaseFactory.getInstance()
-                .findCorrectDatabaseImplementation(new JdbcConnection(connection));
-
-            Liquibase liquibase = new Liquibase(TENANT_MIGRATIONS_CLASSPATH + CHANGELOG_FILE,
-                new ClassLoaderResourceAccessor(), database);
+        try (val connection = connectionService.getConnection(dbName, userName, dbPassword);
+             val liquibase = new Liquibase(TENANT_MIGRATIONS_CLASSPATH + CHANGELOG_FILE,
+                     new ClassLoaderResourceAccessor(), getDatabase(connection))) {
 
             liquibase.update(new Contexts(), new LabelExpression());
 
-            liquibase.close();
-
-        } catch (Throwable throwable) {
+        } catch (Exception throwable) {
 
             log.error("Exception during enabling migrations to main datasource: {}", throwable.getMessage());
         }
@@ -79,21 +68,21 @@ public class LiquibaseService implements SmartInitializingSingleton {
 
     public void enableMigrationsToMainDatasource() {
 
+        try (val connection = connectionService.getConnectionToMainDatasource();
+             val liquibase = new Liquibase(MAIN_DS_MIGRATIONS_CLASSPATH + CHANGELOG_FILE,
+                     new ClassLoaderResourceAccessor(), getDatabase(connection))) {
 
-        try (Connection connection = connectionService.getConnectionToMainDatasource()) {
-
-            Database database = DatabaseFactory.getInstance()
-                .findCorrectDatabaseImplementation(new JdbcConnection(connection));
-
-            Liquibase liquibase = new Liquibase(MAIN_DS_MIGRATIONS_CLASSPATH + CHANGELOG_FILE,
-                new ClassLoaderResourceAccessor(), database);
             liquibase.update(new Contexts(), new LabelExpression());
-
-            liquibase.close();
 
         } catch (Throwable throwable) {
 
             log.error("Exception during enabling tenant migrations: {}", throwable.getMessage());
         }
+    }
+
+    private Database getDatabase(Connection connection) throws DatabaseException {
+
+        return DatabaseFactory.getInstance()
+                .findCorrectDatabaseImplementation(new JdbcConnection(connection));
     }
 }

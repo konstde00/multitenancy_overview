@@ -24,15 +24,6 @@ public class DataSourceConfig {
         this.dataSourceRouting = dataSourceRouting;
     }
 
-
-    public DataSourceRoutingService getDataSourceRouting() {
-        return dataSourceRouting;
-    }
-
-    public void setDataSourceRouting(DataSourceRoutingService dataSourceRouting) {
-        this.dataSourceRouting = dataSourceRouting;
-    }
-
     @Bean
     @Primary
     public DataSource dataSource() {

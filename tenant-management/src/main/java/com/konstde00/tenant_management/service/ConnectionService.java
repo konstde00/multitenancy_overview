@@ -5,7 +5,6 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import java.net.ConnectException;
@@ -16,7 +15,6 @@ import java.util.Properties;
 
 @Slf4j
 @Component
-//@PropertySource(ignoreResourceNotFound = true, value = "classpath:config.yml")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ConnectionService {
 

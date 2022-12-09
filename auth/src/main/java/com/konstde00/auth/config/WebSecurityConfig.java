@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
+import static com.konstde00.commons.domain.enums.Role.*;
 import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -33,11 +34,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/v3/docs/**", "/swagger-ui/**", "/docs/**").permitAll()
                 .antMatchers("/api/login/**").permitAll()
-                .antMatchers("/api/tenants/**").hasAuthority("SYS_ADMIN")
-                .antMatchers(HttpMethod.GET, "/api/researches/**").hasAnyAuthority("SYS_ADMIN", "ADMIN", "USER")
-                .antMatchers(HttpMethod.POST, "/api/researches/**").hasAnyAuthority("SYS_ADMIN", "ADMIN")
-                .antMatchers(HttpMethod.PATCH, "/api/researches/**").hasAnyAuthority("SYS_ADMIN", "ADMIN")
-                .antMatchers(HttpMethod.DELETE, "/api/researches/**").hasAnyAuthority("SYS_ADMIN", "ADMIN")
+                .antMatchers("/api/tenants/**").hasAuthority(SYS_ADMIN.getValue())
+                .antMatchers(HttpMethod.GET, "/api/researches/**").hasAnyAuthority(SYS_ADMIN.getValue(), ADMIN.getValue(), USER.getValue())
+                .antMatchers(HttpMethod.POST, "/api/researches/**").hasAnyAuthority(SYS_ADMIN.getValue(), ADMIN.getValue())
+                .antMatchers(HttpMethod.PATCH, "/api/researches/**").hasAnyAuthority(SYS_ADMIN.getValue(), ADMIN.getValue())
+                .antMatchers(HttpMethod.DELETE, "/api/researches/**").hasAnyAuthority(SYS_ADMIN.getValue(), ADMIN.getValue())
                 .anyRequest()
                 .authenticated()
                 .and()

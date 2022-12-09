@@ -24,19 +24,18 @@ public class LoginService {
     UserService userService;
     TokenService tokenService;
 
-    public JwtDto authorizationByUsername(LoginByUsernameDto loginDto, String tenantKey) {
+    public JwtDto authorizationByUsername(LoginByUsernameDto authenticationInfo) {
 
-        //dataSourceContextHolder.setBranchContext(tenantKey);
+        User user = userService.getByEmail(authenticationInfo.getEmail());
 
-        User user = userService.getByEmail(loginDto.getEmail());
-        validatePassword(loginDto.getPassword(), user.getPassword());
+        validatePassword(authenticationInfo.getPassword(), user.getPassword());
 
         return tokenService.generate(user);
     }
 
     private void validatePassword(String inputPassword, String correctPassword) {
 
-        var passwordValidation = BCrypt.checkpw(inputPassword, correctPassword);
+        boolean passwordValidation = BCrypt.checkpw(inputPassword, correctPassword);
 
         if (!passwordValidation) {
 

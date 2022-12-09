@@ -1,14 +1,12 @@
 package com.konstde00.tenant_management.service.data_source;
 
 import com.konstde00.tenant_management.domain.dto.data_source.TenantDbInfoDto;
-import com.konstde00.tenant_management.repository.dao.TenantDao;
 import com.konstde00.tenant_management.service.LiquibaseService;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Service;
 

@@ -7,8 +7,6 @@ import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
 
-import java.io.Serializable;
-
 import static lombok.AccessLevel.PRIVATE;
 
 @Data

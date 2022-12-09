@@ -24,7 +24,6 @@ import static lombok.AccessLevel.PRIVATE;
 @Service
 @DependsOn("dataSourceRouting")
 @FieldDefaults(level = PRIVATE, makeFinal = true)
-//@PropertySource(value = "file:auth/src/main/resources/auth-config.yml")
 public class TokenService {
 
     @NonFinal
@@ -45,7 +44,7 @@ public class TokenService {
                 .userId(user.getId())
                 .token(toToken(user, expired, secretKey))
                 .email(user.getEmail())
-                .roles(user.getRoles().stream().map(Role::toString).collect(Collectors.toList()))
+                .roles(user.getRoles().stream().map(Role::toString).toList())
                 .build();
     }
 
@@ -56,7 +55,7 @@ public class TokenService {
                 .setExpiration(expired)
                 .claim("userId", user.getId())
                 .claim("tenantId", user.getTenant() == null ? null : user.getTenant().getId())
-                .claim("roles", user.getRoles().stream().map(Role::toString).collect(Collectors.toList()))
+                .claim("roles", user.getRoles().stream().map(Role::toString).toList())
                 .claim("email", user.getEmail())
                 .compact();
     }

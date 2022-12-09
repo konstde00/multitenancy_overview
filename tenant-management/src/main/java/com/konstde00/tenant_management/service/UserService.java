@@ -5,7 +5,6 @@ import com.konstde00.commons.domain.entity.User;
 import com.konstde00.commons.domain.enums.Role;
 import com.konstde00.commons.exceptions.ForbiddenException;
 import com.konstde00.commons.exceptions.ResourceNotFoundException;
-import com.konstde00.commons.util.SecurityUtils;
 import com.konstde00.tenant_management.domain.dto.request.CreateUserRequestDto;
 import com.konstde00.tenant_management.domain.dto.response.CreateUserResponseDto;
 import com.konstde00.tenant_management.domain.dto.response.UserAuthShortDto;
