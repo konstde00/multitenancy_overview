@@ -37,8 +37,8 @@ public class LiquibaseService implements SmartInitializingSingleton {
     }
 
     static String CHANGELOG_FILE = "db.changelog-master.yml";
-    static String MAIN_DS_MIGRATIONS_CLASSPATH = "classpath:liquibase/main_db_migrations/";
-    static String TENANT_MIGRATIONS_CLASSPATH = "classpath:liquibase/tenant_db_migrations/";
+    static String MAIN_DS_MIGRATIONS_CLASSPATH = "classpath:liquibase/migrations/main_db/";
+    static String TENANT_MIGRATIONS_CLASSPATH = "classpath:liquibase/migrations/tenant_db/";
 
     public void afterSingletonsInstantiated() {
 
