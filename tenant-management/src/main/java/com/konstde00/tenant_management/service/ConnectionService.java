@@ -19,23 +19,23 @@ import java.util.Properties;
 public class ConnectionService {
 
     @NonFinal
-    @Value("${datasource.main.url:jdbc:postgresql://localhost:5432/demo_lab}")
+    @Value("${datasource.main.url}")
     String mainDatasourceUrl;
 
     @NonFinal
-    @Value("${datasource.main.username:demo_lab}")
+    @Value("${datasource.main.username}")
     String mainDatasourceUsername;
 
     @NonFinal
-    @Value("${datasource.main.password:mega_secure_password}")
+    @Value("${datasource.main.password}")
     String mainDatasourcePassword;
 
     @NonFinal
-    @Value("${datasource.base-url:jdbc:postgresql://localhost:5432/}")
+    @Value("${datasource.base-url}")
     String datasourceBaseUrl;
 
     @NonFinal
-    @Value("${datasource.main.driver:org.postgresql.Driver}")
+    @Value("${datasource.main.driver}")
     String mainDatasourceDriverClassName;
 
     static String USER = "user";
@@ -44,11 +44,14 @@ public class ConnectionService {
     public Connection getConnectionToMainDatasource() throws ConnectException {
 
         try {
+
             Properties dbProperties = new Properties();
             Class.forName(mainDatasourceDriverClassName);
             dbProperties.put(USER, mainDatasourceUsername);
             dbProperties.put(PASSWORD, mainDatasourcePassword);
+
             return DriverManager.getConnection(mainDatasourceUrl, dbProperties);
+
         } catch (SQLException | ClassNotFoundException e) {
 
             log.error(e.getMessage());

@@ -26,23 +26,23 @@ import java.util.List;
 public class TenantDao {
 
     @NonFinal
-    @Value("${datasource.base-url:jdbc:postgresql://localhost:5432/}")
+    @Value("${datasource.base-url}")
     String datasourceBaseUrl;
 
     @NonFinal
-    @Value("${datasource.main.driver:org.postgresql.Driver}")
+    @Value("${datasource.main.driver}")
     String mainDatasourceDriverClassName;
 
     @NonFinal
-    @Value("${datasource.main.name:demo_lab}")
+    @Value("${datasource.main.name}")
     String mainDbName;
 
     JdbcTemplate jdbcTemplate;
 
     @Autowired
     public TenantDao(
-            @Qualifier("mainDataSourceProperties") DataSourceProperties mainDatasourceProperties) {
-        this.jdbcTemplate = new JdbcTemplate(mainDatasourceProperties.initializeDataSourceBuilder().build());
+            @Qualifier("mainDataSource") DataSource mainDataSource) {
+        this.jdbcTemplate = new JdbcTemplate(mainDataSource);
     }
 
     public List<TenantDbInfoDto> getTenantInfo() {
@@ -63,10 +63,7 @@ public class TenantDao {
         });
     }
 
-    //TODO: think about toLowerCase() removing
     public void createTenantDb(String dbName, String userName, String password) {
-
-        userName = userName.toLowerCase();
 
         createUserIfMissing(userName, password);
 
@@ -94,7 +91,7 @@ public class TenantDao {
                             $do$""", userName, userName, password, userName, password);
             jdbcTemplate.execute(createAgentQuery);
 
-        } catch (Throwable throwable) {
+        } catch (Exception throwable) {
 
             log.error("Error during creation user : {}", throwable.getMessage());
         }

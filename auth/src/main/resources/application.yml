@@ -86,27 +86,10 @@ datasource:
 jwt:
   secret: very_strong_secret_very_strong_secret_very_strong_secret_very_strong_secret_very_strong_secret_very_strong_secret
 
-code:
-  expiration:
-    time: 60000
-
-threads:
-  amount:
-    excel: 1000
-
 token:
-  accountManager:
-    expiration:
-      time:
-        ms: 7776000000
-  admin:
-    expiration:
-      time:
-        ms: 86400000
-    remember:
-      expiration:
-        time:
-          ms: 2592000000
+  expiration:
+    time:
+      sec: 1440
 
 driver: org.postgresql.Driver
 url: ${spring.datasource.url}
@@ -114,7 +97,3 @@ verbose: true
 dropFirst: false
 username: ${spring.datasource.username}
 password: ${spring.datasource.password}
-
-environment: ${ENVIRONMENT:PROD}
-
-test.cron: '* */5 * * * *'

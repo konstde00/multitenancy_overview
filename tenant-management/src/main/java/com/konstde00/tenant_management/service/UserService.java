@@ -38,7 +38,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public class UserService {
 
     @NonFinal
-    @Value("${jwt.secret:very_strong_secret_very_strong_secret_very_strong_secret_very_strong_secret_very_strong_secret_very_strong_secret}")
+    @Value("${jwt.secret}")
     String jwtSecret;
 
     UserDao userDao;
@@ -107,7 +107,7 @@ public class UserService {
 
                 return user;
 
-            } catch (Throwable t) {
+            } catch (Exception t) {
 
                 throw new ForbiddenException("Access denied");
             }

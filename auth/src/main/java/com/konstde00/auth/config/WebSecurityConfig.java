@@ -20,7 +20,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Value("${jwt.secret:very_strong_secret_very_strong_secret_very_strong_secret_very_strong_secret_very_strong_secret_very_strong_secret}")
+    @Value("${jwt.secret}")
     private String jwtSecret;
 
     @Override

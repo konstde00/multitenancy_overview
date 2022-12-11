@@ -35,15 +35,15 @@ public class DataSourceRoutingService extends AbstractRoutingDataSource implemen
     Map<Object, DataSource> resolvedDataSources;
 
     public DataSourceRoutingService(@Lazy DatasourceConfigService datasourceConfigService,
-                                    @Qualifier("mainDataSourceProperties") DataSourceProperties mainDatasourceProperties,
+                                    @Qualifier("mainDataSource") DataSource mainDataSource,
                                     Map<Object, DataSource> resolvedDataSources,
                                     Map<String, DaoHolder> daoHolders) {
         this.datasourceConfigService = datasourceConfigService;
-        this.tenantDao = new TenantDao(mainDatasourceProperties);
+        this.tenantDao = new TenantDao(mainDataSource);
 
         this.resolvedDataSources = resolvedDataSources;
         this.setTargetDataSources(Map.of());
-        this.setDefaultTargetDataSource(mainDatasourceProperties.initializeDataSourceBuilder().build());
+        this.setDefaultTargetDataSource(mainDataSource);
 
         this.daoHolders = daoHolders;
     }

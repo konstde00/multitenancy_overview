@@ -11,7 +11,6 @@ import liquibase.exception.DatabaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
@@ -74,7 +73,7 @@ public class LiquibaseService implements SmartInitializingSingleton {
 
             liquibase.update(new Contexts(), new LabelExpression());
 
-        } catch (Throwable throwable) {
+        } catch (Exception throwable) {
 
             log.error("Exception during enabling tenant migrations: {}", throwable.getMessage());
         }

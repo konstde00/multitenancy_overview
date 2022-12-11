@@ -37,15 +37,15 @@ public class DataSourceConfig {
                 "com.konstde00.tenant_management", "com.konstde00.lab", "com.konstde00.applicationmodule").build();
     }
 
-    @Bean(name="entityManagerFactory")
-    public LocalContainerEntityManagerFactoryBean entityManagerFactoryBean(EntityManagerFactoryBuilder builder) {
+    @Bean(name="customEntityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean customEntityManagerFactoryBean(EntityManagerFactoryBuilder builder) {
         return builder.dataSource(dataSource()).packages("com.konstde00.auth", "com.konstde00.commons",
                 "com.konstde00.tenant_management", "com.konstde00.lab", "com.konstde00.applicationmodule").build();
     }
 
     @Bean(name = "customTransactionManager")
     public JpaTransactionManager transactionManager(
-        @Autowired @Qualifier("customEntityManager") LocalContainerEntityManagerFactoryBean entityManagerFactoryBean) {
-        return new JpaTransactionManager(entityManagerFactoryBean.getObject());
+        @Autowired @Qualifier("customEntityManager") LocalContainerEntityManagerFactoryBean customEntityManagerFactoryBean) {
+        return new JpaTransactionManager(customEntityManagerFactoryBean.getObject());
     }
 }

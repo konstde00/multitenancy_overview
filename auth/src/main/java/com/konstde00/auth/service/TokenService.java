@@ -27,11 +27,11 @@ import static lombok.AccessLevel.PRIVATE;
 public class TokenService {
 
     @NonFinal
-    @Value("${jwt.secret:very_strong_secret_very_strong_secret_very_strong_secret_very_strong_secret_very_strong_secret_very_strong_secret}")
+    @Value("${jwt.secret}")
     String jwtSecret;
 
     @NonFinal
-    @Value("${token.expiration.time.sec:1440}")
+    @Value("${token.expiration.time.sec}")
     Long expirationTimeSec;
 
     public JwtDto generate(User user) {

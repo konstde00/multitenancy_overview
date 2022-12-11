@@ -19,6 +19,8 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.sql.DataSource;
 import java.util.List;
 
 @Slf4j
@@ -28,6 +30,7 @@ import java.util.List;
 public class TenantService {
 
     static Boolean CREATED = true;
+
     TenantDao tenantDao;
     UserService userService;
     LiquibaseService liquibaseService;
@@ -38,13 +41,13 @@ public class TenantService {
     public TenantService(UserService userService,
                          TenantRepository tenantRepository,
                          LiquibaseService liquibaseService,
-                         @Qualifier("mainDataSourceProperties") DataSourceProperties mainDatasourceProperties,
+                         @Qualifier("mainDataSource") DataSource mainDatasource,
                          DatasourceConfigService datasourceConfigService,
                          DataSourceRoutingService dataSourceRoutingService) {
         this.userService = userService;
         this.tenantRepository = tenantRepository;
         this.liquibaseService = liquibaseService;
-        this.tenantDao = new TenantDao(mainDatasourceProperties);
+        this.tenantDao = new TenantDao(mainDatasource);
         this.datasourceConfigService = datasourceConfigService;
         this.dataSourceRoutingService = dataSourceRoutingService;
     }
@@ -62,7 +65,7 @@ public class TenantService {
 
     public TenantResponseDto create(CreateTenantRequestDto requestDto) {
 
-        requestDto.setUserName(requestDto.getUserName().toLowerCase());
+        //requestDto.setUserName(requestDto.getUserName().toLowerCase());
 
         tenantDao.createTenantDb(requestDto.getName(), requestDto.getUserName(), requestDto.getDbPassword());
         liquibaseService.enableMigrations(requestDto.getDbName(), requestDto.getUserName(), requestDto.getDbPassword());

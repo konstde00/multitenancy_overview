@@ -3,38 +3,41 @@ package com.konstde00.tenant_management.config;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
+import javax.sql.DataSource;
+
 @Configuration
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@PropertySource(value = "classpath:config.yml")
+@PropertySource(value = "classpath:application.yml")
 public class MainDataSourceConfig {
 
-    @Value("${datasource.main.driver:org.postgresql.Driver}")
+    @Value("${datasource.main.driver}")
     String driver;
 
-    @Value("${datasource.main.url:jdbc:postgresql://localhost:5432/demo_lab}")
+    @Value("${datasource.main.url}")
     String url;
 
-    @Value("${datasource.main.username:demo_lab}")
+    @Value("${datasource.main.username}")
     String username;
 
-    @Value("${datasource.main.password:mega_secure_password}")
+    @Value("${datasource.main.password}")
     String password;
 
-    @Bean(value = "mainDataSourceProperties")
-    public DataSourceProperties dataSource(){
+    @Bean(value = "mainDataSource")
+    public DataSource dataSource(){
 
-        DataSourceProperties ds = new DataSourceProperties();
+        BasicDataSource ds = new BasicDataSource();
         ds.setUrl(url);
         ds.setUsername(username);
         ds.setDriverClassName(driver);
         ds.setPassword(password);
+        ds.setRollbackOnReturn(false);
 
         return ds;
     }

@@ -21,7 +21,7 @@ import java.util.Map;
 public class DatasourceConfigService {
 
     @NonFinal
-    @Value("${datasource.base-url:jdbc:postgresql://localhost:5432/}")
+    @Value("${datasource.base-url}")
     String datasourceBaseUrl;
 
     @NonFinal

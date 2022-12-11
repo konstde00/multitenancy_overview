@@ -56,10 +56,6 @@ spring:
     scheduling:
       pool:
         size: 1
-  messages:
-    cache-duration: PT1S # 1 second, see the ISO 8601 standard
-  thymeleaf:
-    cache: false
 
 springdoc:
   swagger-ui:
@@ -85,28 +81,6 @@ datasource:
 
 jwt:
   secret: 4qnaaFbEuHkrhNHCZX59RuIF4fWhjYPbpkBrfsfsdfsGfE0iQ87WfSVfxer8tzfE70wXqlgdufJJ42QTQs123dhtkndS347CU
-
-code:
-  expiration:
-    time: 60000
-
-threads:
-  amount:
-    excel: 1000
-
-token:
-  accountManager:
-    expiration:
-      time:
-        ms: 7776000000
-  admin:
-    expiration:
-      time:
-        ms: 86400000
-    remember:
-      expiration:
-        time:
-          ms: 2592000000
 
 driver: org.postgresql.Driver
 url: ${spring.datasource.url}

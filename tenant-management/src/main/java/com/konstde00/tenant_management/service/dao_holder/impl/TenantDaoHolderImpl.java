@@ -27,15 +27,15 @@ public class TenantDaoHolderImpl implements DaoHolder {
     Map<Long, TenantDao> templates;
 
     @NonFinal
-    @Value("${datasource.base-url:jdbc:postgresql://localhost:5432/}")
+    @Value("${datasource.base-url}")
     String datasourceBaseUrl;
 
     @NonFinal
-    @Value("${datasource.main.driver:org.postgresql.Driver}")
+    @Value("${datasource.main.driver}")
     String mainDatasourceDriverClassName;
 
     @NonFinal
-    @Value("${datasource.main.name:demo_lab}")
+    @Value("${datasource.main.name}")
     String mainDbName;
 
     @Override
