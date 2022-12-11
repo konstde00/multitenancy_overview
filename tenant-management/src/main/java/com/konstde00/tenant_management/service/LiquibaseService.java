@@ -59,9 +59,9 @@ public class LiquibaseService implements SmartInitializingSingleton {
 
             liquibase.update(new Contexts(), new LabelExpression());
 
-        } catch (Exception throwable) {
+        } catch (Exception exception) {
 
-            log.error("Exception during enabling migrations to main datasource: {}", throwable.getMessage());
+            log.error("Exception during enabling migrations to main datasource: {}", exception.getMessage());
         }
     }
 
@@ -73,9 +73,9 @@ public class LiquibaseService implements SmartInitializingSingleton {
 
             liquibase.update(new Contexts(), new LabelExpression());
 
-        } catch (Exception throwable) {
+        } catch (Exception exception) {
 
-            log.error("Exception during enabling tenant migrations: {}", throwable.getMessage());
+            log.error("Exception during enabling tenant migrations: {}", exception.getMessage());
         }
     }
 

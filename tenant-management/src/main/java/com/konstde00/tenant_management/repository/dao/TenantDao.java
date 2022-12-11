@@ -20,7 +20,6 @@ import java.util.List;
 
 @Slf4j
 @Builder
-@Repository
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class TenantDao {
@@ -91,9 +90,9 @@ public class TenantDao {
                             $do$""", userName, userName, password, userName, password);
             jdbcTemplate.execute(createAgentQuery);
 
-        } catch (Exception throwable) {
+        } catch (Exception exception) {
 
-            log.error("Error during creation user : {}", throwable.getMessage());
+            log.error("Error during creation user : {}", exception.getMessage());
         }
     }
 }

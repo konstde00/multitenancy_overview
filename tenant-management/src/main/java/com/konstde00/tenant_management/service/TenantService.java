@@ -3,6 +3,7 @@ package com.konstde00.tenant_management.service;
 import com.konstde00.commons.domain.entity.Tenant;
 import com.konstde00.commons.domain.enums.Role;
 import com.konstde00.commons.exceptions.NotValidException;
+import com.konstde00.tenant_management.domain.dto.data_source.TenantDbInfoDto;
 import com.konstde00.tenant_management.domain.dto.request.CreateTenantRequestDto;
 import com.konstde00.tenant_management.domain.dto.request.RenameTenantRequestDto;
 import com.konstde00.tenant_management.domain.dto.response.TenantResponseDto;
@@ -15,13 +16,13 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -65,8 +66,6 @@ public class TenantService {
 
     public TenantResponseDto create(CreateTenantRequestDto requestDto) {
 
-        //requestDto.setUserName(requestDto.getUserName().toLowerCase());
-
         tenantDao.createTenantDb(requestDto.getName(), requestDto.getUserName(), requestDto.getDbPassword());
         liquibaseService.enableMigrations(requestDto.getDbName(), requestDto.getUserName(), requestDto.getDbPassword());
 
@@ -77,8 +76,12 @@ public class TenantService {
 
         userService.create(requestDto.getUser(), tenant, List.of(Role.ADMIN));
 
-        dataSourceRoutingService.updateResolvedDataSources(datasourceConfigService
-                .configureDataSources(tenantDao.getTenantInfo()));
+        List<TenantDbInfoDto> tenantInfo = tenantDao.getTenantInfo();
+
+        Map<Object, DataSource> configuredDataSources = datasourceConfigService
+                .configureDataSources(tenantInfo);
+
+        dataSourceRoutingService.updateResolvedDataSources(configuredDataSources);
 
         return TenantMapper.INSTANCE.toResponseDto(tenant);
     }
