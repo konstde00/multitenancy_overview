@@ -11,7 +11,7 @@ Content-Type: application/json
 ### 2. Create database for tenant
 POST localhost:8080/api/tenants/v1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNjcwNzgyMTk1LCJ1c2VySWQiOjEsInJvbGVzIjpbIlNZU19BRE1JTiJdLCJlbWFpbCI6ImRlZmF1bHRTeXNBZG1pbkBnbWFpbC5jb20ifQ.U9okKzws0pEqdUMfJ5KBHfwp7ki_Kg-_-KpEM5B94CKGG3jI2JLup_igUMKweudoUZ3ISgZ_x2rxczzcq-ho1A
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNjcwODQ3MTA4LCJ1c2VySWQiOjEsInJvbGVzIjpbIlNZU19BRE1JTiJdLCJlbWFpbCI6ImRlZmF1bHRTeXNBZG1pbkBnbWFpbC5jb20ifQ.y9ezwf6zeZdyWgDn2xr8QspzqDKKOKYh7ZBWF_8yuv6ze76m0jQVFq_GGQK7VcreQKPj7RM8-ShUWRqeyfj2Hg
 
 {
   "name": "test_tenant",

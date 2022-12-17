@@ -2,13 +2,12 @@ package com.konstde00.tenant_management.service.data_source;
 
 import com.konstde00.tenant_management.domain.dto.data_source.TenantDbInfoDto;
 import com.konstde00.tenant_management.repository.dao.TenantDao;
-import com.konstde00.tenant_management.service.dao_holder.DaoHolder;
+import com.konstde00.tenant_management.service.dao_holder.AbstractDaoHolder;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
@@ -29,7 +28,7 @@ import static lombok.AccessLevel.PRIVATE;
 public class DataSourceRoutingService extends AbstractRoutingDataSource implements SmartInitializingSingleton {
 
     TenantDao tenantDao;
-    Map<String, DaoHolder> daoHolders;
+    Map<String, AbstractDaoHolder> daoHolders;
     DatasourceConfigService datasourceConfigService;
 
     @NonFinal
@@ -38,7 +37,7 @@ public class DataSourceRoutingService extends AbstractRoutingDataSource implemen
     public DataSourceRoutingService(@Lazy DatasourceConfigService datasourceConfigService,
                                     @Qualifier("mainDataSource") DataSource mainDataSource,
                                     Map<Object, DataSource> resolvedDataSources,
-                                    Map<String, DaoHolder> daoHolders) {
+                                    Map<String, AbstractDaoHolder> daoHolders) {
         this.datasourceConfigService = datasourceConfigService;
         this.tenantDao = new TenantDao(mainDataSource);
 
@@ -57,7 +56,7 @@ public class DataSourceRoutingService extends AbstractRoutingDataSource implemen
         Map<Object, DataSource> dataSources
                 = datasourceConfigService.configureDataSources(tenantDbInfo);
 
-        updateDaoTemplateHolders(dataSources);
+        updateDaoHolders(dataSources);
     }
 
     @Override
@@ -76,10 +75,10 @@ public class DataSourceRoutingService extends AbstractRoutingDataSource implemen
 
         resolvedDataSources = dataSources;
 
-        updateDaoTemplateHolders(dataSources);
+        updateDaoHolders(dataSources);
     }
 
-    public void updateDaoTemplateHolders(Map<Object, DataSource> dataSources) {
+    public void updateDaoHolders(Map<Object, DataSource> dataSources) {
 
         daoHolders.forEach((key, value) -> value.addNewTemplates(dataSources));
     }

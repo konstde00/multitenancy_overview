@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Service;
@@ -27,9 +28,12 @@ public class DatasourceConfigService {
     @NonFinal
     Boolean wasMainDatasourceConfigured = false;
 
+    DataSource mainDataSource;
     LiquibaseService liquibaseService;
 
-    public DatasourceConfigService(LiquibaseService liquibaseService) {
+    public DatasourceConfigService(@Qualifier("mainDataSource") DataSource mainDataSource,
+                                   LiquibaseService liquibaseService) {
+        this.mainDataSource = mainDataSource;
         this.liquibaseService = liquibaseService;
     }
 
@@ -42,6 +46,7 @@ public class DatasourceConfigService {
             wasMainDatasourceConfigured = true;
         }
 
+        dataSources.put(null, mainDataSource);
         for (TenantDbInfoDto dto : dtos) {
 
             dataSources.put(dto.getId(), configureDataSource(dto));

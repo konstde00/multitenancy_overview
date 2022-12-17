@@ -17,29 +17,13 @@ import javax.sql.DataSource;
 import java.util.List;
 
 @Slf4j
-@Builder
 @Repository
-@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class UserDao {
-
-    @NonFinal
-    @Value("${datasource.base-url:jdbc:postgresql://localhost:5432/}")
-    String datasourceBaseUrl;
-
-    @NonFinal
-    @Value("${datasource.main.driver:org.postgresql.Driver}")
-    String mainDatasourceDriverClassName;
-
-    @NonFinal
-    @Value("${datasource.main.name:demo_lab}")
-    String mainDbName;
-
-    NamedParameterJdbcTemplate jdbcTemplate;
+public class UserDao extends AbstractDao {
 
     @Autowired
     public UserDao(DataSource dataSource) {
-        this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+        super(dataSource);
     }
 
     public UserAuthShortDto getAuthShortDtoByUserId(Long userId) {

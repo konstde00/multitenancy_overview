@@ -38,30 +38,3 @@ databaseChangeLog:
             incrementBy: 1
             schemaName: public
             sequenceName: tenants_id_seq
-
-  - changeSet:
-      id: insertInfoAboutMainDb
-      author: konstde00
-      changes:
-        - insert:
-            columns:
-              - column:
-                  name: id
-                  value: 1
-              - column:
-                  name: name
-                  value: demo_lab
-              - column:
-                  name: db_name
-                  value: demo_lab
-              - column:
-                  name: user_name
-                  value: demo_lab
-              - column:
-                  name: db_password
-                  value: mega_secure_password
-              - column:
-                  name: creation_status
-                  value: CREATED
-            schemaName: public
-            tableName: tenants

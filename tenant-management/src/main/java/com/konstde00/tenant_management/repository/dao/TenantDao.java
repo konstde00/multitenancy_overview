@@ -2,47 +2,20 @@ package com.konstde00.tenant_management.repository.dao;
 
 import com.konstde00.commons.domain.enums.DatabaseCreationStatus;
 import com.konstde00.tenant_management.domain.dto.data_source.TenantDbInfoDto;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.experimental.FieldDefaults;
-import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
-@Builder
-@AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class TenantDao {
-
-    @NonFinal
-    @Value("${datasource.base-url}")
-    String datasourceBaseUrl;
-
-    @NonFinal
-    @Value("${datasource.main.driver}")
-    String mainDatasourceDriverClassName;
-
-    @NonFinal
-    @Value("${datasource.main.name}")
-    String mainDbName;
-
-    NamedParameterJdbcTemplate jdbcTemplate;
+public class TenantDao extends AbstractDao {
 
     @Autowired
-    public TenantDao(
-            @Qualifier("mainDataSource") DataSource mainDataSource) {
-        this.jdbcTemplate = new NamedParameterJdbcTemplate(mainDataSource);
+    public TenantDao(@Qualifier("mainDataSource") DataSource mainDataSource) {
+        super(mainDataSource);
     }
 
     public List<TenantDbInfoDto> getTenantInfo(DatabaseCreationStatus creationStatus) {
