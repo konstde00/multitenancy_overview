@@ -1,5 +1,6 @@
 package com.konstde00.commons.domain.entity;
 
+import com.konstde00.commons.domain.enums.DatabaseCreationStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
 
+import static javax.persistence.EnumType.STRING;
 import static lombok.AccessLevel.PRIVATE;
 
 @Data
@@ -34,6 +36,7 @@ public class Tenant {
     @Column(name = "db_password")
     String dbPassword;
 
-    @Column(name = "db_created")
-    boolean dbCreated;
+    @Enumerated(STRING)
+    @Column(name = "creation_status")
+    DatabaseCreationStatus creationStatus;
 }

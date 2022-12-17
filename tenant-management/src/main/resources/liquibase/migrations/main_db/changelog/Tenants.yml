@@ -23,8 +23,8 @@ databaseChangeLog:
                    name: db_password
                    type: varchar
                - column:
-                   name: db_created
-                   type: boolean
+                   name: creation_status
+                   type: varchar
              schemaName: public
              tableName: tenants
 
@@ -61,7 +61,7 @@ databaseChangeLog:
                   name: db_password
                   value: mega_secure_password
               - column:
-                  name: db_created
-                  value: true
+                  name: creation_status
+                  value: CREATED
             schemaName: public
             tableName: tenants

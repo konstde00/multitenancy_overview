@@ -1,6 +1,7 @@
 package com.konstde00.tenant_management.service;
 
 import com.konstde00.commons.domain.entity.Tenant;
+import com.konstde00.commons.domain.enums.DatabaseCreationStatus.*;
 import com.konstde00.commons.domain.enums.Role;
 import com.konstde00.commons.exceptions.NotValidException;
 import com.konstde00.tenant_management.domain.dto.data_source.TenantDbInfoDto;
@@ -24,13 +25,13 @@ import javax.sql.DataSource;
 import java.util.List;
 import java.util.Map;
 
+import static com.konstde00.commons.domain.enums.DatabaseCreationStatus.*;
+
 @Slf4j
 @Service
 @DependsOn("dataSourceRouting")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class TenantService {
-
-    static Boolean CREATED = true;
 
     TenantDao tenantDao;
     UserService userService;
@@ -66,22 +67,39 @@ public class TenantService {
 
     public TenantResponseDto create(CreateTenantRequestDto requestDto) {
 
-        tenantDao.createTenantDb(requestDto.getName(), requestDto.getUserName(), requestDto.getDbPassword());
-        liquibaseService.enableMigrations(requestDto.getDbName(), requestDto.getUserName(), requestDto.getDbPassword());
-
         Tenant tenant = TenantMapper.INSTANCE.fromRequestDto(requestDto);
 
-        tenant.setDbCreated(CREATED);
+        tenant.setCreationStatus(IN_PROGRESS);
         tenant = saveAndFlush(tenant);
 
-        userService.create(requestDto.getUser(), tenant, List.of(Role.ADMIN));
+        try {
 
-        List<TenantDbInfoDto> tenantInfo = tenantDao.getTenantInfo();
+            tenantDao.createTenantDb(requestDto.getName(), requestDto.getUserName(), requestDto.getDbPassword());
+            tenant.setCreationStatus(CREATED);
 
-        Map<Object, DataSource> configuredDataSources = datasourceConfigService
-                .configureDataSources(tenantInfo);
+        } catch (Exception e) {
 
-        dataSourceRoutingService.updateResolvedDataSources(configuredDataSources);
+            log.error("Failed to create tenant db: " + e.getMessage());
+
+        } finally {
+
+            tenant.setCreationStatus(FAILED_TO_CREATE);
+            tenant = saveAndFlush(tenant);
+        }
+
+        if (CREATED.equals(tenant.getCreationStatus())) {
+
+            liquibaseService.enableMigrations(requestDto.getDbName(), requestDto.getUserName(), requestDto.getDbPassword());
+
+            userService.create(requestDto.getUser(), tenant, List.of(Role.ADMIN));
+
+            List<TenantDbInfoDto> tenantInfo = tenantDao.getTenantInfo(CREATED);
+
+            Map<Object, DataSource> configuredDataSources = datasourceConfigService
+                    .configureDataSources(tenantInfo);
+
+            dataSourceRoutingService.updateResolvedDataSources(configuredDataSources);
+        }
 
         return TenantMapper.INSTANCE.toResponseDto(tenant);
     }

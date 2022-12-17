@@ -44,7 +44,7 @@ public class DatasourceConfigService {
 
         for (TenantDbInfoDto dto : dtos) {
 
-            dataSources.put(dto.getKey(), configureDataSource(dto));
+            dataSources.put(dto.getId(), configureDataSource(dto));
         }
 
         return dataSources;

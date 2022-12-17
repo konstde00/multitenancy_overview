@@ -1,5 +1,6 @@
 package com.konstde00.tenant_management.domain.dto.response;
 
+import com.konstde00.commons.domain.enums.DatabaseCreationStatus;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -14,5 +15,5 @@ public class TenantResponseDto {
 
     String dbName;
 
-    Boolean dbCreated;
+    DatabaseCreationStatus creationStatus;
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
@@ -53,7 +54,7 @@ public class TenantDaoHolderImpl implements DaoHolder {
 
         dataSources.forEach((key, value) -> templates.putIfAbsent((Long) key,
             TenantDao.builder()
-                .jdbcTemplate(new JdbcTemplate(value))
+                .jdbcTemplate(new NamedParameterJdbcTemplate(value))
                 .datasourceBaseUrl(datasourceBaseUrl)
                 .mainDatasourceDriverClassName(mainDatasourceDriverClassName)
                 .mainDbName(mainDbName)

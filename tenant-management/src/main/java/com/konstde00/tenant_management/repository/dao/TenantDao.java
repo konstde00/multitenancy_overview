@@ -1,5 +1,6 @@
 package com.konstde00.tenant_management.repository.dao;
 
+import com.konstde00.commons.domain.enums.DatabaseCreationStatus;
 import com.konstde00.tenant_management.domain.dto.data_source.TenantDbInfoDto;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -10,12 +11,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
+import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
@@ -36,24 +37,27 @@ public class TenantDao {
     @Value("${datasource.main.name}")
     String mainDbName;
 
-    JdbcTemplate jdbcTemplate;
+    NamedParameterJdbcTemplate jdbcTemplate;
 
     @Autowired
     public TenantDao(
             @Qualifier("mainDataSource") DataSource mainDataSource) {
-        this.jdbcTemplate = new JdbcTemplate(mainDataSource);
+        this.jdbcTemplate = new NamedParameterJdbcTemplate(mainDataSource);
     }
 
-    public List<TenantDbInfoDto> getTenantInfo() {
+    public List<TenantDbInfoDto> getTenantInfo(DatabaseCreationStatus creationStatus) {
 
         String query = "select id, db_name, user_name, db_password " +
                 "from tenants " +
-                "where db_created = true";
-        return jdbcTemplate.query(query, (rs, rowNum) -> {
+                "where creation_status = :creationStatus";
+
+        MapSqlParameterSource params = new MapSqlParameterSource("creationStatus", creationStatus.getValue());
+
+        return jdbcTemplate.query(query, params, (rs, rowNum) -> {
 
             TenantDbInfoDto dto = new TenantDbInfoDto();
 
-            dto.setKey(rs.getLong("id"));
+            dto.setId(rs.getLong("id"));
             dto.setDbName(rs.getString("db_name"));
             dto.setUserName(rs.getString("user_name"));
             dto.setDbPassword(rs.getString("db_password"));
@@ -66,29 +70,38 @@ public class TenantDao {
 
         createUserIfMissing(userName, password);
 
-        String createDbQuery = String.format("CREATE DATABASE %s", dbName);
+        String createDbQuery = "CREATE DATABASE :dbName";
+        MapSqlParameterSource paramsForDbCreation = new MapSqlParameterSource("dbName", dbName);
 
-        jdbcTemplate.execute(createDbQuery);
+        jdbcTemplate.update(createDbQuery, paramsForDbCreation);
         log.info("Created database: " + dbName);
 
-        jdbcTemplate.execute(String.format("GRANT ALL PRIVILEGES ON DATABASE %s TO %s", dbName, userName));
+        String grantPrivilegesQuery = "GRANT ALL PRIVILEGES ON DATABASE :dbName TO :userName";
+        MapSqlParameterSource paramsForGrantingPrivileges = new MapSqlParameterSource("dbName", dbName)
+                .addValue("userName", userName);
+
+        jdbcTemplate.update(grantPrivilegesQuery, paramsForGrantingPrivileges);
     }
 
     private void createUserIfMissing(String userName, String password) {
 
         try {
 
-            String createAgentQuery = String.format("""
+            String createUserQuery = """
                 DO
                             $do$
                                 BEGIN
-                                    IF EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = '%s') THEN
-                                       ALTER USER %s WITH PASSWORD '%s';                    ELSE
-                                        CREATE USER %s WITH CREATEDB CREATEROLE PASSWORD '%s';
+                                    IF EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = :userName) THEN
+                                       ALTER USER :userName WITH PASSWORD :password;                      ELSE
+                                        CREATE USER :userName WITH CREATEDB CREATEROLE PASSWORD :password;
                                     END IF;
                                 END
-                            $do$""", userName, userName, password, userName, password);
-            jdbcTemplate.execute(createAgentQuery);
+                            $do$""";
+
+            MapSqlParameterSource params = new MapSqlParameterSource("userName", userName)
+                    .addValue("password", password);
+
+            jdbcTemplate.update(createUserQuery, params);
 
         } catch (Exception exception) {
 

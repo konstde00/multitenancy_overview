@@ -13,7 +13,7 @@ import static lombok.AccessLevel.PRIVATE;
 @FieldDefaults(level = PRIVATE)
 public class TenantDbInfoDto {
 
-    Long key;
+    Long id;
 
     String dbName;
 

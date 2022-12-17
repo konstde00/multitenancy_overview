@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static com.konstde00.commons.domain.enums.DatabaseCreationStatus.CREATED;
 import static lombok.AccessLevel.PRIVATE;
 
 @Slf4j
@@ -51,7 +52,7 @@ public class DataSourceRoutingService extends AbstractRoutingDataSource implemen
     @Override
     public void afterSingletonsInstantiated() {
 
-        List<TenantDbInfoDto> tenantDbInfo = tenantDao.getTenantInfo();
+        List<TenantDbInfoDto> tenantDbInfo = tenantDao.getTenantInfo(CREATED);
 
         Map<Object, DataSource> dataSources
                 = datasourceConfigService.configureDataSources(tenantDbInfo);
