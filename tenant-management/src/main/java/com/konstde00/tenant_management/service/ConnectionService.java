@@ -6,6 +6,7 @@ import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.net.ConnectException;
 import java.sql.Connection;
@@ -19,18 +20,6 @@ import java.util.Properties;
 public class ConnectionService {
 
     @NonFinal
-    @Value("${datasource.main.url}")
-    String mainDatasourceUrl;
-
-    @NonFinal
-    @Value("${datasource.main.username}")
-    String mainDatasourceUsername;
-
-    @NonFinal
-    @Value("${datasource.main.password}")
-    String mainDatasourcePassword;
-
-    @NonFinal
     @Value("${datasource.base-url}")
     String datasourceBaseUrl;
 
@@ -41,22 +30,24 @@ public class ConnectionService {
     static String USER = "user";
     static String PASSWORD = "password";
 
-    public Connection getConnectionToMainDatasource() throws ConnectException {
+    public static Connection getConnection(PostgreSQLContainer container) throws ConnectException {
 
         try {
 
             Properties dbProperties = new Properties();
-            Class.forName(mainDatasourceDriverClassName);
-            dbProperties.put(USER, mainDatasourceUsername);
-            dbProperties.put(PASSWORD, mainDatasourcePassword);
+            Class.forName(container.getDriverClassName());
+            dbProperties.put(USER, container.getUsername());
+            dbProperties.put(PASSWORD, container.getPassword());
 
-            return DriverManager.getConnection(mainDatasourceUrl, dbProperties);
+            return DriverManager
+                .getConnection(container.getJdbcUrl(),
+                    dbProperties);
 
         } catch (SQLException | ClassNotFoundException e) {
 
             log.error(e.getMessage());
 
-            throw new ConnectException("Can't connect to DB " + mainDatasourceUrl);
+            throw new ConnectException("Can't connect to DB");
         }
     }
 
@@ -65,13 +56,13 @@ public class ConnectionService {
         try {
 
             Properties dbProperties = new Properties();
+
             Class.forName(mainDatasourceDriverClassName);
             dbProperties.put(USER, userName);
             dbProperties.put(PASSWORD, dbPassword);
 
-            return DriverManager
-                .getConnection(datasourceBaseUrl + dbName,
-                    dbProperties);
+            return DriverManager.getConnection(datasourceBaseUrl + dbName,
+                            dbProperties);
 
         } catch (SQLException | ClassNotFoundException e) {
 

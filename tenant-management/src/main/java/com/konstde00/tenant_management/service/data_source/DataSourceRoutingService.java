@@ -1,24 +1,20 @@
 package com.konstde00.tenant_management.service.data_source;
 
-import com.konstde00.tenant_management.domain.dto.data_source.TenantDbInfoDto;
-import com.konstde00.tenant_management.repository.dao.TenantDao;
+import com.konstde00.tenant_management.service.LiquibaseService;
 import com.konstde00.tenant_management.service.dao_holder.AbstractDaoHolder;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
-
-import static com.konstde00.commons.domain.enums.DatabaseCreationStatus.CREATED;
 import static lombok.AccessLevel.PRIVATE;
 
 @Slf4j
@@ -27,22 +23,35 @@ import static lombok.AccessLevel.PRIVATE;
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 public class DataSourceRoutingService extends AbstractRoutingDataSource implements SmartInitializingSingleton {
 
-    TenantDao tenantDao;
+    LiquibaseService liquibaseService;
     Map<String, AbstractDaoHolder> daoHolders;
-    DatasourceConfigService datasourceConfigService;
+    DataSourceConfigService datasourceConfigService;
 
     @NonFinal
-    Map<Object, DataSource> resolvedDataSources;
+    @Value("${datasource.main.name}")
+    String mainDatasourceName;
 
-    public DataSourceRoutingService(@Lazy DatasourceConfigService datasourceConfigService,
+    @NonFinal
+    @Value("${datasource.main.username}")
+    String mainDatasourceUsername;
+
+    @NonFinal
+    @Value("${datasource.main.password}")
+    String mainDatasourcePassword;
+
+    public DataSourceRoutingService(@Lazy DataSourceConfigService datasourceConfigService,
+                                    LiquibaseService liquibaseService,
                                     @Qualifier("mainDataSource") DataSource mainDataSource,
-                                    Map<Object, DataSource> resolvedDataSources,
                                     Map<String, AbstractDaoHolder> daoHolders) {
         this.datasourceConfigService = datasourceConfigService;
-        this.tenantDao = new TenantDao(mainDataSource);
 
-        this.resolvedDataSources = resolvedDataSources;
-        this.setTargetDataSources(Map.of());
+        this.liquibaseService = liquibaseService;
+        this.liquibaseService.enableMigrationsToMainDatasource(mainDatasourceName,
+                mainDatasourceUsername, mainDatasourcePassword);
+
+        Map<Object, Object> dataSourceMap = this.datasourceConfigService.configureDataSources();
+
+        this.setTargetDataSources(dataSourceMap);
         this.setDefaultTargetDataSource(mainDataSource);
 
         this.daoHolders = daoHolders;
@@ -51,34 +60,28 @@ public class DataSourceRoutingService extends AbstractRoutingDataSource implemen
     @Override
     public void afterSingletonsInstantiated() {
 
-        List<TenantDbInfoDto> tenantDbInfo = tenantDao.getTenantInfo(CREATED);
+        Map<Object, Object> dataSources
+                = datasourceConfigService.configureDataSources();
 
-        Map<Object, DataSource> dataSources
-                = datasourceConfigService.configureDataSources(tenantDbInfo);
+        updateResolvedDataSources(dataSources);
 
-        updateDaoHolders(dataSources);
+        updateDaoTemplateHolders(dataSources);
     }
 
     @Override
-    public Map<Object, DataSource> getResolvedDataSources() {
-
-        return Collections.unmodifiableMap(this.resolvedDataSources);
-    }
-
-    @Override
-    protected Object determineCurrentLookupKey() {
+    protected Long determineCurrentLookupKey() {
 
         return DataSourceContextHolder.getCurrentTenantId();
     }
 
-    public void updateResolvedDataSources(Map<Object, DataSource> dataSources) {
+    public void updateResolvedDataSources(Map<Object, Object> dataSources) {
 
-        resolvedDataSources = dataSources;
+        setTargetDataSources(dataSources);
 
-        updateDaoHolders(dataSources);
+        afterPropertiesSet();
     }
 
-    public void updateDaoHolders(Map<Object, DataSource> dataSources) {
+    public void updateDaoTemplateHolders(Map<Object, Object> dataSources) {
 
         daoHolders.forEach((key, value) -> value.addNewTemplates(dataSources));
     }

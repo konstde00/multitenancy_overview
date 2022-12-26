@@ -1,6 +1,7 @@
 package com.konstde00.tenant_management.service.data_source;
 
 import com.konstde00.tenant_management.domain.dto.data_source.TenantDbInfoDto;
+import com.konstde00.tenant_management.repository.dao.TenantDao;
 import com.konstde00.tenant_management.service.LiquibaseService;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -16,10 +17,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.konstde00.commons.domain.enums.DatabaseCreationStatus.CREATED;
+
 @Slf4j
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class DatasourceConfigService {
+public class DataSourceConfigService {
+
+    @NonFinal
+    @Value("${datasource.main.name}")
+    String mainDatasourceName;
+
+    @NonFinal
+    @Value("${datasource.main.username}")
+    String mainDatasourceUsername;
+
+    @NonFinal
+    @Value("${datasource.main.password}")
+    String mainDatasourcePassword;
 
     @NonFinal
     @Value("${datasource.base-url}")
@@ -31,20 +46,23 @@ public class DatasourceConfigService {
     DataSource mainDataSource;
     LiquibaseService liquibaseService;
 
-    public DatasourceConfigService(@Qualifier("mainDataSource") DataSource mainDataSource,
+    public DataSourceConfigService(@Qualifier("mainDataSource") DataSource mainDataSource,
                                    LiquibaseService liquibaseService) {
         this.mainDataSource = mainDataSource;
         this.liquibaseService = liquibaseService;
     }
 
-    public Map<Object, DataSource> configureDataSources(List<TenantDbInfoDto> dtos) {
+    public Map<Object, Object> configureDataSources() {
 
-        Map<Object, DataSource> dataSources = new HashMap<>();
+        Map<Object, Object> dataSources = new HashMap<>();
 
         if (!wasMainDatasourceConfigured)  {
-            liquibaseService.enableMigrationsToMainDatasource();
+            liquibaseService.enableMigrationsToMainDatasource(mainDatasourceName,
+                    mainDatasourceUsername, mainDatasourcePassword);
             wasMainDatasourceConfigured = true;
         }
+
+        List<TenantDbInfoDto> dtos = new TenantDao(mainDataSource).getTenantDbInfo(CREATED);
 
         dataSources.put(null, mainDataSource);
         for (TenantDbInfoDto dto : dtos) {

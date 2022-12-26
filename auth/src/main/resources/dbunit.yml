@@ -1,0 +1,4 @@
+disableSequenceFiltering: true
+properties:
+  caseSensitiveTableNames: true
+  replacers: [!!com.github.database.rider.core.replacers.IncludeReplacer {}, !!com.github.database.rider.core.replacers.NullReplacer {}]

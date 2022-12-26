@@ -1,7 +1,9 @@
 package com.konstde00.auth.config;
 
 import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -17,11 +19,13 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @Slf4j
 @Configuration
 @EnableWebSecurity
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @NonFinal
     @Value("${jwt.secret}")
-    private String jwtSecret;
+    String jwtSecret;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

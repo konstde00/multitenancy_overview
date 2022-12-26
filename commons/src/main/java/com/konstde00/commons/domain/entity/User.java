@@ -4,7 +4,6 @@ import com.konstde00.commons.domain.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
@@ -18,6 +17,7 @@ import static lombok.AccessLevel.PRIVATE;
 
 @Data
 @Entity
+@Builder
 @AllArgsConstructor
 @Table(name = "users")
 @FieldDefaults(level = PRIVATE)

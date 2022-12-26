@@ -8,10 +8,10 @@ Content-Type: application/json
     "password":"JustAPasswordForDefaultSysAdmin"
 }
 
-### 2. Create database for tenant
+### 2. Create database for the first tenant
 POST localhost:8080/api/tenants/v1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNjcwODQ3MTA4LCJ1c2VySWQiOjEsInJvbGVzIjpbIlNZU19BRE1JTiJdLCJlbWFpbCI6ImRlZmF1bHRTeXNBZG1pbkBnbWFpbC5jb20ifQ.y9ezwf6zeZdyWgDn2xr8QspzqDKKOKYh7ZBWF_8yuv6ze76m0jQVFq_GGQK7VcreQKPj7RM8-ShUWRqeyfj2Hg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNjcyMzM5NzQxLCJ1c2VySWQiOjEsInJvbGVzIjpbIlNZU19BRE1JTiJdLCJlbWFpbCI6ImRlZmF1bHRTeXNBZG1pbkBnbWFpbC5jb20ifQ.E9e-Gga6ZMeeDRHJ1MaWhDcBpNKdNJet-LTKhHIv2PDgi2YmOwHmO-9MIfF1cJx0UyKb3YFQ-WPmmOT6WhzDWg
 
 {
   "name": "test_tenant",
@@ -19,48 +19,104 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNjcwODQ3MTA4L
   "userName": "test_tenant_userName",
   "dbPassword": "test_tenant_password",
   "user": {
-    "email": "test123@gmail.com",
+    "email": "firstUser@gmail.com",
     "password": "test_tenant_password"
   }
 }
 
-### 3. Create a user with "ADMIN" role for this tenant
+### 3. Create a user with "ADMIN" role for first tenant
 
 POST localhost:8080/api/users/v1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNjcwNzgyMTk1LCJ1c2VySWQiOjEsInJvbGVzIjpbIlNZU19BRE1JTiJdLCJlbWFpbCI6ImRlZmF1bHRTeXNBZG1pbkBnbWFpbC5jb20ifQ.U9okKzws0pEqdUMfJ5KBHfwp7ki_Kg-_-KpEM5B94CKGG3jI2JLup_igUMKweudoUZ3ISgZ_x2rxczzcq-ho1A
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNjcyMzM5NzQxLCJ1c2VySWQiOjEsInJvbGVzIjpbIlNZU19BRE1JTiJdLCJlbWFpbCI6ImRlZmF1bHRTeXNBZG1pbkBnbWFpbC5jb20ifQ.E9e-Gga6ZMeeDRHJ1MaWhDcBpNKdNJet-LTKhHIv2PDgi2YmOwHmO-9MIfF1cJx0UyKb3YFQ-WPmmOT6WhzDWg
 
 {
   "tenantId": 2,
-  "email": "admin@gmail.com",
+  "email": "firstAdmin@gmail.com",
   "password": "admin_password",
   "roles" : ["ADMIN"]
 }
 
-### 4. Login as ADMIN of this tenant
+### 4. Login as ADMIN of first tenant
 
 POST localhost:8080/api/login/v1/email
 Content-Type: application/json
 
 {
-  "email":"admin@gmail.com",
+  "email":"firstAdmin@gmail.com",
   "password":"admin_password"
 }
 
-### 5. Create a research in this tenant
+### 5. Create a research in first tenant
 
 POST localhost:8080/api/researches/v1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzIiwiZXhwIjoxNjcwNzgyMzI1LCJ1c2VySWQiOjMsInRlbmFudElkIjoyLCJyb2xlcyI6WyJBRE1JTiJdLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSJ9.V5uXEomX3TY5LqtL4DRyXKYmD3FNCFzvKWTpZfZIz7L4p0hxnzEn36XD7MXI2tE9RMZuEUsaELRswy9FRri16A
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0IiwiZXhwIjoxNjcyMzQxMjU2LCJ1c2VySWQiOjQsInRlbmFudElkIjoyLCJyb2xlcyI6WyJBRE1JTiJdLCJlbWFpbCI6InRlc3RfYWRtaW5AZ21haWwuY29tIn0.JVk1J0rhLHZoveeVB3Ez1oKiYBuLBjtEKMwOPJRzET9WtFQ7kOkAuNZAov8vW5-4ke5HbxClrm4hHBD6k6sjIA
 
 {
-  "name": "Just a test research name",
-  "description": "Just a test research description"
+  "name": "Research in first tenant name",
+  "description": "Research in first tenant description"
 }
 
-
-### 6. Get list of all available researches
+### 6. Get list of all available researches using first tenant user
 
 GET localhost:8080/api/researches/v1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzIiwiZXhwIjoxNjcwNzgyMzI1LCJ1c2VySWQiOjMsInRlbmFudElkIjoyLCJyb2xlcyI6WyJBRE1JTiJdLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSJ9.V5uXEomX3TY5LqtL4DRyXKYmD3FNCFzvKWTpZfZIz7L4p0hxnzEn36XD7MXI2tE9RMZuEUsaELRswy9FRri16A
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0IiwiZXhwIjoxNjcyMzQxMjU2LCJ1c2VySWQiOjQsInRlbmFudElkIjoyLCJyb2xlcyI6WyJBRE1JTiJdLCJlbWFpbCI6InRlc3RfYWRtaW5AZ21haWwuY29tIn0.JVk1J0rhLHZoveeVB3Ez1oKiYBuLBjtEKMwOPJRzET9WtFQ7kOkAuNZAov8vW5-4ke5HbxClrm4hHBD6k6sjIA
+
+
+### 7. Create database for second tenant
+POST localhost:8080/api/tenants/v1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNjcyMzM5NzQxLCJ1c2VySWQiOjEsInJvbGVzIjpbIlNZU19BRE1JTiJdLCJlbWFpbCI6ImRlZmF1bHRTeXNBZG1pbkBnbWFpbC5jb20ifQ.E9e-Gga6ZMeeDRHJ1MaWhDcBpNKdNJet-LTKhHIv2PDgi2YmOwHmO-9MIfF1cJx0UyKb3YFQ-WPmmOT6WhzDWg
+
+{
+  "name": "test_tenant_2",
+  "dbName": "test_tenant_2",
+  "userName": "test_tenant_userName_2",
+  "dbPassword": "test_tenant_password_2",
+  "user": {
+    "email": "secondUser@gmail.com",
+    "password": "test_tenant_password"
+  }
+}
+
+### 8. Create a user with "ADMIN" role for second tenant
+
+POST localhost:8080/api/users/v1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNjcyMzM5NzQxLCJ1c2VySWQiOjEsInJvbGVzIjpbIlNZU19BRE1JTiJdLCJlbWFpbCI6ImRlZmF1bHRTeXNBZG1pbkBnbWFpbC5jb20ifQ.E9e-Gga6ZMeeDRHJ1MaWhDcBpNKdNJet-LTKhHIv2PDgi2YmOwHmO-9MIfF1cJx0UyKb3YFQ-WPmmOT6WhzDWg
+
+{
+  "tenantId": 3,
+  "email": "secondAdmin@gmail.com",
+  "password": "admin_password",
+  "roles" : ["ADMIN"]
+}
+
+### 9. Login as ADMIN of second tenant
+
+POST localhost:8080/api/login/v1/email
+Content-Type: application/json
+
+{
+  "email":"secondAdmin@gmail.com",
+  "password":"admin_password"
+}
+
+### 10. Create a research in second tenant
+
+POST localhost:8080/api/researches/v1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0IiwiZXhwIjoxNjcyMzQxMjU2LCJ1c2VySWQiOjQsInRlbmFudElkIjoyLCJyb2xlcyI6WyJBRE1JTiJdLCJlbWFpbCI6InRlc3RfYWRtaW5AZ21haWwuY29tIn0.JVk1J0rhLHZoveeVB3Ez1oKiYBuLBjtEKMwOPJRzET9WtFQ7kOkAuNZAov8vW5-4ke5HbxClrm4hHBD6k6sjIA
+
+{
+  "name": "Research in second tenant name",
+  "description": "Research in second tenant description"
+}
+
+### 11. Get list of all available researches using second tenant user
+
+GET localhost:8080/api/researches/v1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0IiwiZXhwIjoxNjcyMzQxMjU2LCJ1c2VySWQiOjQsInRlbmFudElkIjoyLCJyb2xlcyI6WyJBRE1JTiJdLCJlbWFpbCI6InRlc3RfYWRtaW5AZ21haWwuY29tIn0.JVk1J0rhLHZoveeVB3Ez1oKiYBuLBjtEKMwOPJRzET9WtFQ7kOkAuNZAov8vW5-4ke5HbxClrm4hHBD6k6sjIA

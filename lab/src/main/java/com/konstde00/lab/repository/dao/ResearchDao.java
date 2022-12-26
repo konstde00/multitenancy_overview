@@ -23,7 +23,7 @@ public class ResearchDao extends AbstractDao {
                 
                 """;
 
-        return jdbcTemplate.query(query, (rs, rowNum) -> toDto(rs));
+        return namedParameterJdbcTemplate.query(query, (rs, rowNum) -> toDto(rs));
     }
 
     private ResearchDto toDto(ResultSet resultSet) throws SQLException {

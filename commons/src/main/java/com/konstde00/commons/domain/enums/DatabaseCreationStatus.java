@@ -12,6 +12,7 @@ public enum DatabaseCreationStatus {
 
     IN_PROGRESS("IN_PROGRESS"),
     CREATED("CREATED"),
+    NOT_CREATED("NOT_CREATED"),
     FAILED_TO_CREATE("FAILED_TO_CREATE");
 
     String value;

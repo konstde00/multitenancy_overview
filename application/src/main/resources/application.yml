@@ -1,4 +1,7 @@
 spring:
+  main:
+    web-application-type: none
+    allow-bean-definition-overriding: true
   profiles:
     # The commented value for `active` can be replaced with valid Spring profiles to load.
     # Otherwise, it will be filled in by maven when building the JAR file
@@ -16,8 +19,6 @@ spring:
     jpa:
       repositories:
         bootstrap-mode: deferred
-  main:
-    allow-bean-definition-overriding: true
   datasource:
     driverClassName: org.postgresql.Driver
     url: jdbc:postgresql://127.0.0.1:5432/demo_lab

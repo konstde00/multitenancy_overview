@@ -28,7 +28,7 @@ databaseChangeLog:
       changes:
         - createSequence:
             dataType: bigint
-            minValue: 2
+            minValue: 3
             incrementBy: 1
             schemaName: public
             sequenceName: users_id_seq

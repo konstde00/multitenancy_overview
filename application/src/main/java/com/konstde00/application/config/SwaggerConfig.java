@@ -1,4 +1,4 @@
-package com.konstde00.applicationmodule.config;
+package com.konstde00.application.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;

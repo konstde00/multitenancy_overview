@@ -18,6 +18,7 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
@@ -93,9 +94,12 @@ public class UserService {
         if (token != null && token.startsWith("Bearer ")) {
 
             try {
-                String claims = token.replace("Bearer ", "");
+                String claims = token.replace("Bearer ", StringUtils.EMPTY);
 
-                Jws<Claims> claimsJws = Jwts.parserBuilder().setSigningKey(jwtSecret.getBytes()).build().parseClaimsJws(claims);
+                Jws<Claims> claimsJws = Jwts.parserBuilder()
+                        .setSigningKey(jwtSecret.getBytes())
+                        .build()
+                        .parseClaimsJws(claims);
 
                 Long userId = Long.parseLong(claimsJws.getBody().getSubject());
                 UserAuthShortDto user = userDao.getAuthShortDtoByUserId(userId);
@@ -107,7 +111,9 @@ public class UserService {
 
                 return user;
 
-            } catch (Exception t) {
+            } catch (Exception e) {
+
+                log.error("Exception occurred while 'getActualUser' execution: " + e.getMessage());
 
                 throw new ForbiddenException("Access denied");
             }

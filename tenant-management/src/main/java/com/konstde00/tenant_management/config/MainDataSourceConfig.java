@@ -1,6 +1,7 @@
 package com.konstde00.tenant_management.config;
 
 import lombok.AccessLevel;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.apache.commons.dbcp2.BasicDataSource;
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.PropertySource;
 
 import javax.sql.DataSource;
 
+@Data
 @Configuration
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)

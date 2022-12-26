@@ -1,7 +1,6 @@
 spring:
-  main:
-    web-application-type: none
-    allow-bean-definition-overriding: true
+  profiles:
+    active: test
   liquibase:
     enabled: false
   jmx:
@@ -10,6 +9,8 @@ spring:
     jpa:
       repositories:
         bootstrap-mode: deferred
+  main:
+    allow-bean-definition-overriding: true
   datasource:
     driverClassName: org.postgresql.Driver
     url: jdbc:postgresql://127.0.0.1:5432/demo_lab
@@ -48,6 +49,10 @@ spring:
     scheduling:
       pool:
         size: 1
+  messages:
+    cache-duration: PT1S # 1 second, see the ISO 8601 standard
+  thymeleaf:
+    cache: false
 
 springdoc:
   swagger-ui:
@@ -72,7 +77,12 @@ datasource:
     password: ${MAIN_DATASOURCE_PASSWORD:mega_secure_password}
 
 jwt:
-  secret: 4qnaaFbEuHkrhNHCZX59RuIF4fWhjYPbpkBrfsfsdfsGfE0iQ87WfSVfxer8tzfE70wXqlgdufJJ42QTQs123dhtkndS347CU
+  secret: very_strong_secret_very_strong_secret_very_strong_secret_very_strong_secret_very_strong_secret_very_strong_secret
+
+token:
+  expiration:
+    time:
+      sec: 1440
 
 driver: org.postgresql.Driver
 url: ${spring.datasource.url}

@@ -20,15 +20,11 @@ public class ResearchDaoHolder extends AbstractDaoHolder {
         return templates.get(tenantKey);
     }
 
-    public void addNewTemplates(Map<Object, DataSource> dataSources) {
+    public void addNewTemplates(Map<Object, Object> dataSources) {
 
         dataSources.forEach((key, value) -> {
 
-            TenantDao tenantDao = new TenantDao(value);
-
-            tenantDao.setMainDbName(mainDbName);
-            tenantDao.setDatasourceBaseUrl(datasourceBaseUrl);
-            tenantDao.setMainDatasourceDriverClassName(mainDatasourceDriverClassName);
+            TenantDao tenantDao = new TenantDao((DataSource) value);
 
             templates.putIfAbsent((Long) key, tenantDao);
         });

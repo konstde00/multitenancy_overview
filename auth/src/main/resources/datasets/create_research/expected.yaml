@@ -1,0 +1,7 @@
+researches:
+    - id: '0'
+      name: First research name
+      description: First research description
+    - id: '1'
+      name: Second research name
+      description: Second research description

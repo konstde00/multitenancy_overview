@@ -2,15 +2,11 @@ package com.konstde00.tenant_management.repository.dao;
 
 import com.konstde00.tenant_management.domain.dto.response.UserAuthShortDto;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.experimental.FieldDefaults;
-import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -22,7 +18,7 @@ import java.util.List;
 public class UserDao extends AbstractDao {
 
     @Autowired
-    public UserDao(DataSource dataSource) {
+    public UserDao(@Qualifier("mainDataSource") DataSource dataSource) {
         super(dataSource);
     }
 
@@ -40,7 +36,7 @@ public class UserDao extends AbstractDao {
 
         MapSqlParameterSource params = new MapSqlParameterSource("userId", userId);
 
-        Long tenantId = jdbcTemplate.queryForObject(queryForTenantKey, params, (rs, rowNum)
+        Long tenantId = namedParameterJdbcTemplate.queryForObject(queryForTenantKey, params, (rs, rowNum)
                 -> rs.getLong("tenant_id"));
 
         dto.setTenantId(tenantId);
@@ -61,7 +57,7 @@ public class UserDao extends AbstractDao {
 
         MapSqlParameterSource params = new MapSqlParameterSource("userId", userId);
 
-        return jdbcTemplate.query(queryForAuthorities, params,
+        return namedParameterJdbcTemplate.query(queryForAuthorities, params,
                 (rs, rowNum) -> rs.getString("role"));
     }
 }

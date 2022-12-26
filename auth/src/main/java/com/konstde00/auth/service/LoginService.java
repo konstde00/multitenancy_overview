@@ -35,9 +35,9 @@ public class LoginService {
 
     private void validatePassword(String inputPassword, String correctPassword) {
 
-        boolean passwordValidation = BCrypt.checkpw(inputPassword, correctPassword);
+        boolean validPassword = BCrypt.checkpw(inputPassword, correctPassword);
 
-        if (!passwordValidation) {
+        if (!validPassword) {
 
             log.error("Password is incorrect.");
 

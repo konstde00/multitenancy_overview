@@ -7,6 +7,7 @@ import com.konstde00.lab.domain.dto.response.ResearchResponseDto;
 import com.konstde00.lab.domain.entity.Research;
 import com.konstde00.lab.mapper.ResearchMapper;
 import com.konstde00.lab.repository.ResearchRepository;
+import com.konstde00.tenant_management.service.data_source.DataSourceContextHolder;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -35,6 +36,8 @@ public class ResearchService {
     public List<ResearchResponseDto> findAll() {
 
         List<Research> researches = researchRepository.findAll();
+
+        log.info("Current tenant id = {}", DataSourceContextHolder.getCurrentTenantId());
 
         return ResearchMapper.INSTANCE.toResponseDtoList(researches);
     }

@@ -1,10 +1,8 @@
 package com.konstde00.tenant_management.service;
 
 import com.konstde00.commons.domain.entity.Tenant;
-import com.konstde00.commons.domain.enums.DatabaseCreationStatus.*;
 import com.konstde00.commons.domain.enums.Role;
 import com.konstde00.commons.exceptions.NotValidException;
-import com.konstde00.tenant_management.domain.dto.data_source.TenantDbInfoDto;
 import com.konstde00.tenant_management.domain.dto.request.CreateTenantRequestDto;
 import com.konstde00.tenant_management.domain.dto.request.RenameTenantRequestDto;
 import com.konstde00.tenant_management.domain.dto.response.TenantResponseDto;
@@ -12,7 +10,7 @@ import com.konstde00.tenant_management.mapper.TenantMapper;
 import com.konstde00.tenant_management.repository.TenantRepository;
 import com.konstde00.tenant_management.repository.dao.TenantDao;
 import com.konstde00.tenant_management.service.data_source.DataSourceRoutingService;
-import com.konstde00.tenant_management.service.data_source.DatasourceConfigService;
+import com.konstde00.tenant_management.service.data_source.DataSourceConfigService;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -37,14 +35,14 @@ public class TenantService {
     UserService userService;
     LiquibaseService liquibaseService;
     TenantRepository tenantRepository;
-    DatasourceConfigService datasourceConfigService;
+    DataSourceConfigService datasourceConfigService;
     DataSourceRoutingService dataSourceRoutingService;
 
     public TenantService(UserService userService,
                          TenantRepository tenantRepository,
                          LiquibaseService liquibaseService,
                          @Qualifier("mainDataSource") DataSource mainDatasource,
-                         DatasourceConfigService datasourceConfigService,
+                         DataSourceConfigService datasourceConfigService,
                          DataSourceRoutingService dataSourceRoutingService) {
         this.userService = userService;
         this.tenantRepository = tenantRepository;
@@ -80,28 +78,29 @@ public class TenantService {
         } catch (Exception e) {
 
             log.error("Failed to create tenant db: " + e.getMessage());
+            tenant.setCreationStatus(FAILED_TO_CREATE);
 
         } finally {
 
-            tenant.setCreationStatus(FAILED_TO_CREATE);
             tenant = saveAndFlush(tenant);
         }
 
+        TenantResponseDto responseDto = TenantMapper.INSTANCE.toResponseDto(tenant);
+
         if (CREATED.equals(tenant.getCreationStatus())) {
 
-            liquibaseService.enableMigrations(requestDto.getDbName(), requestDto.getUserName(), requestDto.getDbPassword());
+            liquibaseService.enableMigrationsToTenantDatasource(requestDto.getDbName(), requestDto.getUserName(), requestDto.getDbPassword());
 
-            userService.create(requestDto.getUser(), tenant, List.of(Role.ADMIN));
+            Long userId = userService.create(requestDto.getUser(), tenant, List.of(Role.ADMIN)).getId();
+            responseDto.setUserId(userId);
 
-            List<TenantDbInfoDto> tenantInfo = tenantDao.getTenantInfo(CREATED);
-
-            Map<Object, DataSource> configuredDataSources = datasourceConfigService
-                    .configureDataSources(tenantInfo);
+            Map<Object, Object> configuredDataSources = datasourceConfigService
+                    .configureDataSources();
 
             dataSourceRoutingService.updateResolvedDataSources(configuredDataSources);
         }
 
-        return TenantMapper.INSTANCE.toResponseDto(tenant);
+        return responseDto;
     }
 
     public Tenant saveAndFlush(Tenant tenant) {

@@ -22,17 +22,5 @@ public abstract class AbstractDaoHolder implements SmartInitializingSingleton {
     @NonFinal
     Map<Long, TenantDao> templates;
 
-    @NonFinal
-    @Value("${datasource.base-url}")
-    String datasourceBaseUrl;
-
-    @NonFinal
-    @Value("${datasource.main.driver}")
-    String mainDatasourceDriverClassName;
-
-    @NonFinal
-    @Value("${datasource.main.name}")
-    String mainDbName;
-
-    public abstract void addNewTemplates(Map<Object, DataSource> dataSources);
+    public abstract void addNewTemplates(Map<Object, Object> dataSources);
 }

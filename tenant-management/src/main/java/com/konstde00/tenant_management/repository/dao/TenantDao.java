@@ -18,7 +18,7 @@ public class TenantDao extends AbstractDao {
         super(mainDataSource);
     }
 
-    public List<TenantDbInfoDto> getTenantInfo(DatabaseCreationStatus creationStatus) {
+    public List<TenantDbInfoDto> getTenantDbInfo(DatabaseCreationStatus creationStatus) {
 
         String query = "select id, db_name, user_name, db_password " +
                 "from tenants " +
@@ -26,7 +26,7 @@ public class TenantDao extends AbstractDao {
 
         MapSqlParameterSource params = new MapSqlParameterSource("creationStatus", creationStatus.getValue());
 
-        return jdbcTemplate.query(query, params, (rs, rowNum) -> {
+        return namedParameterJdbcTemplate.query(query, params, (rs, rowNum) -> {
 
             TenantDbInfoDto dto = new TenantDbInfoDto();
 
@@ -43,38 +43,32 @@ public class TenantDao extends AbstractDao {
 
         createUserIfMissing(userName, password);
 
-        String createDbQuery = "CREATE DATABASE :dbName";
-        MapSqlParameterSource paramsForDbCreation = new MapSqlParameterSource("dbName", dbName);
+        String createDbQuery = "CREATE DATABASE " + dbName;
 
-        jdbcTemplate.update(createDbQuery, paramsForDbCreation);
+        jdbcTemplate.execute(createDbQuery);
         log.info("Created database: " + dbName);
 
-        String grantPrivilegesQuery = "GRANT ALL PRIVILEGES ON DATABASE :dbName TO :userName";
-        MapSqlParameterSource paramsForGrantingPrivileges = new MapSqlParameterSource("dbName", dbName)
-                .addValue("userName", userName);
+        String grantPrivilegesQuery = String.format("GRANT ALL PRIVILEGES ON DATABASE %s TO \"%s\"", dbName, userName);
 
-        jdbcTemplate.update(grantPrivilegesQuery, paramsForGrantingPrivileges);
+        jdbcTemplate.execute(grantPrivilegesQuery);
     }
 
     private void createUserIfMissing(String userName, String password) {
 
         try {
 
-            String createUserQuery = """
+            String createUserQuery = String.format("""
                 DO
                             $do$
                                 BEGIN
-                                    IF EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = :userName) THEN
-                                       ALTER USER :userName WITH PASSWORD :password;                      ELSE
-                                        CREATE USER :userName WITH CREATEDB CREATEROLE PASSWORD :password;
+                                    IF EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = '%s') THEN
+                                       ALTER USER "%s" WITH PASSWORD '%s';                      ELSE
+                                        CREATE USER "%s" WITH CREATEDB CREATEROLE PASSWORD '%s';
                                     END IF;
                                 END
-                            $do$""";
+                            $do$""", userName, userName, password, userName, password);
 
-            MapSqlParameterSource params = new MapSqlParameterSource("userName", userName)
-                    .addValue("password", password);
-
-            jdbcTemplate.update(createUserQuery, params);
+            jdbcTemplate.execute(createUserQuery);
 
         } catch (Exception exception) {
 

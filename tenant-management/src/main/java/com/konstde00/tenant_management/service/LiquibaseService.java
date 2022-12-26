@@ -12,11 +12,15 @@ import liquibase.resource.ClassLoaderResourceAccessor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.SmartInitializingSingleton;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
+
+import javax.sql.DataSource;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -26,11 +30,14 @@ import static lombok.AccessLevel.PRIVATE;
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 public class LiquibaseService implements SmartInitializingSingleton {
 
+    DataSource dataSource;
     TenantService tenantService;
     ConnectionService connectionService;
 
-    public LiquibaseService(@Lazy TenantService tenantService,
+    public LiquibaseService(@Qualifier("mainDataSource") DataSource dataSource,
+                            @Lazy TenantService tenantService,
                             ConnectionService connectionService) {
+        this.dataSource = dataSource;
         this.tenantService = tenantService;
         this.connectionService = connectionService;
     }
@@ -41,20 +48,59 @@ public class LiquibaseService implements SmartInitializingSingleton {
 
     public void afterSingletonsInstantiated() {
 
-        enableMigrationsToMainDatasource();
+        try {
+            enableMigrationsToMainDatasource(dataSource.getConnection());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         List<Tenant> tenants = tenantService.findAll();
 
         for (Tenant tenant : tenants) {
 
-            enableMigrations(tenant.getDbName(), tenant.getUserName(), tenant.getDbPassword());
+            enableMigrationsToTenantDatasource(tenant.getDbName(), tenant.getUserName(), tenant.getDbPassword());
         }
     }
 
-    public synchronized void enableMigrations(String dbName, String userName, String dbPassword) {
+    public void enableMigrationsToTenantDatasource(String dbName, String userName, String dbPassword) {
 
-        try (Connection connection = connectionService.getConnection(dbName, userName, dbPassword);
-             Liquibase liquibase = new Liquibase(TENANT_MIGRATIONS_CLASSPATH + CHANGELOG_FILE,
+        try (Connection connection = connectionService.getConnection(dbName, userName, dbPassword)) {
+
+            enableMigrationsToTenantDatasource(connection);
+
+        } catch (Exception exception) {
+
+            log.error("Exception during enabling migrations to tenant datasource: {}", exception.getMessage());
+        }
+    }
+    public static void enableMigrationsToTenantDatasource(Connection connection) {
+
+        try (Liquibase liquibase = new Liquibase(TENANT_MIGRATIONS_CLASSPATH + CHANGELOG_FILE,
+                     new ClassLoaderResourceAccessor(), getDatabase(connection))) {
+
+            liquibase.update(new Contexts(), new LabelExpression());
+
+        } catch (Exception exception) {
+
+            log.error("Exception during enabling migrations to tenant datasource: {}", exception.getMessage());
+        }
+    }
+
+    public void enableMigrationsToMainDatasource(String dbName, String userName, String dbPassword) {
+
+        try (Connection connection = connectionService.getConnection(dbName, userName, dbPassword)) {
+
+            enableMigrationsToMainDatasource(connection);
+
+        } catch (Exception exception) {
+
+            log.error("Exception during enabling migrations to main datasource: {}", exception.getMessage());
+        }
+    }
+
+    public static void enableMigrationsToMainDatasource(Connection connection) {
+
+        try (Liquibase liquibase = new Liquibase(MAIN_DS_MIGRATIONS_CLASSPATH + CHANGELOG_FILE,
                      new ClassLoaderResourceAccessor(), getDatabase(connection))) {
 
             liquibase.update(new Contexts(), new LabelExpression());
@@ -65,21 +111,7 @@ public class LiquibaseService implements SmartInitializingSingleton {
         }
     }
 
-    public void enableMigrationsToMainDatasource() {
-
-        try (Connection connection = connectionService.getConnectionToMainDatasource();
-             Liquibase liquibase = new Liquibase(MAIN_DS_MIGRATIONS_CLASSPATH + CHANGELOG_FILE,
-                     new ClassLoaderResourceAccessor(), getDatabase(connection))) {
-
-            liquibase.update(new Contexts(), new LabelExpression());
-
-        } catch (Exception exception) {
-
-            log.error("Exception during enabling tenant migrations: {}", exception.getMessage());
-        }
-    }
-
-    private Database getDatabase(Connection connection) throws DatabaseException {
+    private static Database getDatabase(Connection connection) throws DatabaseException {
 
         return DatabaseFactory.getInstance()
                 .findCorrectDatabaseImplementation(new JdbcConnection(connection));

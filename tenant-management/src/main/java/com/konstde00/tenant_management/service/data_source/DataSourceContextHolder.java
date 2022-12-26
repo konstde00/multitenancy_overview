@@ -25,6 +25,8 @@ public class DataSourceContextHolder {
     @NonFinal
     static ThreadLocal<Long> currentTenantId = new ThreadLocal<>();
 
+    static Long DEFAULT_TENANT_ID = null;
+
     public DataSourceContextHolder(@Lazy UserService userService) {
 
         this.userService = userService;
@@ -42,9 +44,22 @@ public class DataSourceContextHolder {
 
     public void updateTenantContext(HttpServletRequest request) {
 
-        UserAuthShortDto user = userService.getActualUser(request);
+        Long tenantId;
 
-        Long tenantId = user.getTenantId();
+        try {
+
+            UserAuthShortDto user = userService.getActualUser(request);
+
+            tenantId = user.getTenantId();
+
+            setCurrentTenantId(tenantId);
+
+        } catch (Exception e) {
+
+            log.error("Exception occurred while 'updateTenantContext' execution: " + e.getMessage());
+
+           tenantId = DEFAULT_TENANT_ID;
+        }
 
         setCurrentTenantId(tenantId);
     }
