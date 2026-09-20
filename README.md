@@ -38,11 +38,9 @@ A request enters `TenantsRoutingFilter`, which resolves the tenant key and write
 resolve the routing table. `ConnectionService` manages per-tenant pools. `LiquibaseService`
 applies schema migrations during provisioning.
 
-Provisioning is idempotent and writes tenant connection metadata to a control-plane database
-with explicit tenant states. On completion it publishes an event; every replica consumes it
-and reconciles its routing table against the control-plane database rather than applying the
-event payload directly, so a replica that missed an event recovers on the next one. Replicas
-starting later bootstrap from the same database.
+Provisioning writes tenant connection metadata to a control-plane database. Replica
+reconciliation through broker events was added later, in
+[`runtime-tenant-onboarding`](https://github.com/konstde00/runtime-tenant-onboarding).
 
 Two data-access strategies are implemented over the same domain objects so they can be
 compared: routed repositories, and per-tenant data-access objects. They differ in what each
@@ -57,66 +55,15 @@ A design walkthrough is published at
 
 ## What was measured
 
-### Isolation under contention
+The measurements were taken against the current implementation, which lives at
+[`runtime-tenant-onboarding`](https://github.com/konstde00/runtime-tenant-onboarding): the
+isolation result under concurrent routing-table replacement, convergence across 3 and 10
+replicas, provisioning and routed-request latency, and per-tenant connection and heap cost.
+Raw results and reproduction instructions are in that repository's `benchmark/`.
 
-Sixteen threads resolved connections for two tenants while a seventeenth thread replaced the
-routing table continuously. Each configuration ran 4,000 requests. The quantity counted is
-requests served from the control-plane database rather than from the requesting tenant's own
-database.
-
-| Routing table update | Wrong-database responses |
-|---|---|
-| Rebuilt in place | 202 of 4,000 (5.1%) |
-| Replaced atomically | 0 of 4,000 |
-
-No exception was thrown and nothing was written to the log in either run. Every one of the 202
-responses was well formed.
-
-### Convergence across replicas
-
-Convergence is measured as the time from the provisioning response returning to the tenant
-being served correctly by every replica, which is the interval during which replicas disagree.
-
-| Replicas | Tenants at start | Median | 95th percentile | Maximum | Converged |
-|---|---|---|---|---|---|
-| 3 | 0 | 419 ms | 745 ms | 1,168 ms | 20 of 20 |
-| 10 | 0 | 595 ms | 2,653 ms | 3,055 ms | 20 of 20 |
-| 3 | 0, over 100 provisionings | 313 ms | 438 ms | 1,014 ms | 100 of 100 |
-| 10 | 100 | 4,897 ms | 7,584 ms | 7,675 ms | 20 of 20 |
-
-Every replica converged in all 160 provisionings.
-
-Raising the replica count from 3 to 10 at a fixed tenant count costs little, 419 ms to 595 ms
-at the median. Raising the tenant count from 20 to 120 at 10 replicas costs a factor of eight.
-That cost is structural rather than incidental: each replica reconciles by re-reading every
-tenant in the CREATED state, so the work per event is proportional to tenant count and is
-performed on every replica. The same re-read is what makes the refresh idempotent under
-duplicate and reordered delivery, so this measurement prices a property the design relies on.
-Applying the event payload incrementally and reconciling fully only on a timer would flatten
-the curve and would have to argue convergence on different grounds.
-
-Provisioning latency, measured separately, did not grow with the number of tenants already
-present. A routed request cost a median of 3.90 ms.
-
-Integration tests run against real infrastructure rather than mocks: PostgreSQL and the
-message broker are started by Testcontainers and their addresses injected into the application
-context, so the measurements include real connection establishment, real migrations and real
-event delivery.
-
-### Resource cost
-
-Per-tenant isolation is commonly rejected on the grounds that connections and memory grow
-linearly with tenant count. The connection half of that claim is a property of one
-connection-pool parameter.
-
-When the minimum idle pool size exceeds zero, which is the default unless configured
-otherwise, provisioned tenants each hold connections and the ceiling is linear in tenant
-count. When it is zero, the tenant count cancels out of the expression and the ceiling is set
-by concurrently active tenants alone: an idle tenant holds no connection, because pools
-release connections when idle.
-
-Live heap grew by roughly 10 KiB per additional idle tenant beyond the first 25. Neither cost
-grew linearly with tenant count in this deployment.
+This repository is the October 2022 implementation. It routes, provisions and migrates on a
+single instance. It has no broker and no replica reconciliation, so the replicated results do
+not apply to it.
 
 ## The same fault in unrelated infrastructure
 
@@ -135,10 +82,14 @@ docker compose up -d postgres
 
 Request examples are in `test.http`.
 
-## Earlier work in this repository set
+## History
 
-The module decomposition follows [`demo-uni`](https://github.com/konstde00/demo-uni)
-(June 2022), which separated an application module, an authentication module and one module
-per faculty. This repository replaces the per-faculty modules with a general
-tenant-management module and adds runtime provisioning. `ty_yak_be` (February 2023) carries
-the same decomposition into a deployed service.
+The problem has been the same since 2022: give every tenant its own database, and add a
+tenant while the system is running. Each repository below took that further.
+
+| | |
+|---|---|
+| June 2022 | [`demo-uni`](https://github.com/konstde00/demo-uni), the first decomposition: an application module, an authentication module, one module per faculty |
+| October 2022 | this repository. Per-faculty modules replaced by a general tenant-management module, runtime provisioning added |
+| February 2023 | [`ty_yak_be`](https://github.com/konstde00/ty_yak_be) carries the same decomposition into a deployed service |
+| 2024 to 2026 | [`runtime-tenant-onboarding`](https://github.com/konstde00/runtime-tenant-onboarding), the artefact behind the papers: replica reconciliation, the benchmark harness, Kubernetes deployment, and the measurements |
