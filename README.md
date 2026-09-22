@@ -60,7 +60,7 @@ isolation result under concurrent routing-table replacement, convergence across 
 replicas, provisioning and routed-request latency, and per-tenant connection and heap cost.
 Raw results and reproduction instructions are in that repository's `benchmark/`.
 
-This repository is the October 2022 implementation. It routes, provisions and migrates on a
+This repository is the first implementation. It routes, provisions and migrates on a
 single instance. It has no broker and no replica reconciliation, so the replicated results do
 not apply to it.
 
