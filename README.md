@@ -88,7 +88,7 @@ tenant while the system is running. Each repository below took that further.
 
 | | |
 |---|---|
-| June 2022 | [`demo-uni`](https://github.com/konstde00/demo-uni), the first decomposition: an application module, an authentication module, one module per faculty |
-| October 2022 | this repository. Per-faculty modules replaced by a general tenant-management module, runtime provisioning added |
-| February 2023 | [`ty_yak_be`](https://github.com/konstde00/ty_yak_be) carries the same decomposition into a deployed service |
 | 2024 to 2026 | [`runtime-tenant-onboarding`](https://github.com/konstde00/runtime-tenant-onboarding), the artefact behind the papers: replica reconciliation, the benchmark harness, Kubernetes deployment, and the measurements |
+| February 2023 | [`ty_yak_be`](https://github.com/konstde00/ty_yak_be) carries the same decomposition into a deployed service |
+| October 2022 | this repository. Per-faculty modules replaced by a general tenant-management module, runtime provisioning added |
+| June 2022 | [`demo-uni`](https://github.com/konstde00/demo-uni), the first decomposition: an application module, an authentication module, one module per faculty |
