@@ -22,16 +22,15 @@ This repository implements both, in-place rebuild and atomic replacement, and me
 
 The measured instance is a Spring Boot application over PostgreSQL with a message broker for
 replica reconciliation. The result concerns how the table is updated rather than this stack; the
-stack is one common way to build the pattern. A multi-module Maven project, 64 classes across
-five modules.
+stack is one common way to build the pattern. A multi-module Maven project.
 
-| Module | Classes | Contents |
-|---|---|---|
-| `tenant-management` | 28 | routing, provisioning, migration, both data-access strategies |
-| `lab` | 11 | measurement harnesses |
-| `auth` | 10 | authentication and tenant resolution |
-| `application` | 8 | entry point, HTTP layer, wiring |
-| `commons` | 7 | shared types |
+| Module | Contents |
+|---|---|
+| `tenant-management` | routing, provisioning, migration, both data-access strategies |
+| `lab` | measurement harnesses |
+| `auth` | authentication and tenant resolution |
+| `application` | entry point, HTTP layer, wiring |
+| `commons` | shared types |
 
 A request enters `TenantsRoutingFilter`, which resolves the tenant key and writes it to
 `DataSourceContextHolder`. `DataSourceRoutingService` and `DataSourceConfigService` hold and
